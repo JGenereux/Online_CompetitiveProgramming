@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { socket } from '../socket';
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 export default function Lobby() {
     return (
         <div>
+            <Navbar />
             <WaitingLobby />
         </div>
     )
@@ -32,6 +34,7 @@ function WaitingLobby() {
             socket.off('roomUpdate');
             socket.off('startMatch');
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

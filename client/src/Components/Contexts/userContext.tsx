@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 interface User {
   userEmail: string;
@@ -13,6 +13,7 @@ interface UserContextType {
   currUser: User | null;
   loginUser: (userInfo: User) => void;
   updateUserExp: (experience: number) => void;
+  logoutUser: () => void;
 }
 
 const defaultUser: User = {
@@ -31,6 +32,9 @@ export const UserContext = createContext<UserContextType>({
   },
   updateUserExp: () => {
     throw new Error("updateUserExp function must be used within UserProvider");
+  },
+  logoutUser: () => {
+    throw new Error("logoutUser function must be used within UserProvider")
   }
 });
 
@@ -39,9 +43,20 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
-// Define and export provider
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [currUser, setUser] = useState<User>(defaultUser);
+  const [currUser, setUser] = useState<User>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : defaultUser;
+  });
+
+  //used to store and update user in localStorage
+  useEffect(() => {
+    if (currUser !== defaultUser) {
+      localStorage.setItem('user', JSON.stringify(currUser))
+    } else {
+      localStorage.removeItem('user')
+    }
+  }, [currUser])
 
   const loginUser = (userInfo: User) => {
     setUser(userInfo)
@@ -54,8 +69,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     })
   }
 
+  const logoutUser = () => {
+    setUser(defaultUser)
+    localStorage.removeItem('user')
+  }
+
   return (
-    <UserContext.Provider value={{ currUser, loginUser, updateUserExp }}>
+    <UserContext.Provider value={{ currUser, loginUser, updateUserExp, logoutUser }}>
       {children}
     </UserContext.Provider >
 

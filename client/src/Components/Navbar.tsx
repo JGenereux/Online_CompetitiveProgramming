@@ -12,8 +12,8 @@ export default function Navbar() {
     }
     return <div className="flex flex-row dark:bg-slate-800 flex-wrap w-full z-50 static items-center text-white">
         <div className="space-x-4 ml-4">
-            <a href="google.com" className="text-sm">Home</a>
-            <a href="wendys.com" className="text-sm">About</a>
+            <a href="/" className="text-sm">Home</a>
+            <a href="/about" className="text-sm">About</a>
         </div>
 
         <div className="flex flex-col ml-auto my-2 mr-4">

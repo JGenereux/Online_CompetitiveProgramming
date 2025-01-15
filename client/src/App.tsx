@@ -54,7 +54,7 @@ function App() {
     };
 
     loadCachedData();
-  }, []); // Run only on mount
+  }, [question, value]); // Run only on mount
 
   // Separate useEffect for socket events
   useEffect(() => {
