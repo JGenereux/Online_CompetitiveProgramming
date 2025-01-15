@@ -1,5 +1,7 @@
+import Navbar from "./Navbar";
+
 export default function Result() {
     return <div>
-        <h1>Hello World</h1>
+        <Navbar />
     </div>
 }

@@ -86,12 +86,12 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
                 console.log('logged u out')
                 return
             }
-            console.log(currUser)
-            const res = await axios.get(`http://localhost:5000/question/runTest?userCode=${encodeURIComponent(value)}&currLanguage=${currLanguage}&languageVersion=${currLanguageVersion}&lobbyID=${id}&userName=${currUser?.userName}&questionDifficulty=${question.difficulty}`)
 
-            const { testResults, updatedExp, passed } = res.data;
+            const res = await axios.get(`http://localhost:5000/question/runTest?userCode=${encodeURIComponent(value)}&currLanguage=${currLanguage}&languageVersion=${currLanguageVersion}&lobbyID=${id}&userName=${currUser.userName}&questionDifficulty=${question.difficulty}`)
 
-            const caseResults = testResults;
+            const { testsPassed, updatedExp, passed } = res.data;
+
+            const caseResults = testsPassed;
             const responses: string[] = [];
 
             caseResults.map((result: testCase) => {
@@ -99,10 +99,11 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
             })
 
             if (passed) {
+                console.log('updating exp')
                 updateUserExp(updatedExp)
             }
 
-            setTestCases(testResults);
+            setTestCases(testsPassed);
             setQuestionPassed(passed);
             setCodeResponse(responses);
         } catch (error) {

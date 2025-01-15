@@ -82,19 +82,17 @@ const getQuestionExperience = (questionDifficulty) => {
 app.get('/question/runTest', async (req, res) => {
     const {userCode, currLanguage, languageVersion, lobbyID, userName, questionDifficulty} = req.query;
     
-    //fix username not sending
-    console.log(userCode, currLanguage, languageVersion, lobbyID, userName, questionDifficulty)
-    //calculate how much experience question is worth
     try{
         const testsPassed = await currentQuestion.RunTests(userCode, currLanguage, languageVersion);
     
         //check if all tests are passed
-        let passed = true
-        testsPassed.map((result) => {
-            if (result.passed == false) {
-                passed = false
-            }
-        })
+        let passed = testsPassed.every((result) => result.passed)
+
+        const resultRes = {
+            testsPassed,
+            updatedExp: 0,
+            passed
+        };
 
         //if all testcases are passed means game is now over.
         if(passed) {
@@ -114,17 +112,26 @@ app.get('/question/runTest', async (req, res) => {
             lobbies.map((lobby) => {
                 if(lobby.lobbyID == lobbyID) {
                     const roomName = lobby.roomName
-                    io.to(roomName).emit('gameResult', {result: true, message: 'Player has won'})
-                    return res.json({testsPassed: testsPassed, updatedExp: rewardedExp, passed: passed})
+                    resultRes.updatedExp = rewardedExp
+                    destroyLobby(roomName)
                 }
             })
-        }
+        } 
 
-        return res.json({testResults: testsPassed, updatedExp: 0, passed: passed})
+        return res.json(resultRes)
     } catch(error) {
         console.log(error)
     }
 })
+
+const destroyLobby = (roomName) => {
+    setTimeout(() => {        
+        io.to(roomName).emit('gameResult', {
+            result: true,
+            message: 'Player has won'
+        });
+    }, 15000);
+}
 
 const expressServer = app.listen(PORT, () => {
     console.log('Listening on port: ', PORT);
