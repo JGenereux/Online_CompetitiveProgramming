@@ -2,20 +2,22 @@ import { Button } from "@mui/material"
 import Navbar from "./Navbar"
 import { socket } from "../socket.ts"
 import { useEffect } from "react"
-import { useUser } from "./Contexts/userContext.tsx"
+import earthIcon from '../assets/Images/earth.png'
+import lockIcon from '../assets/Images/secure-lock.png'
 
-document.body.style.backgroundColor = "#1e293b"
+document.body.style.backgroundColor = "#121212"
 
 
 export default function Home() {
-    const { currUser } = useUser()
-
-    useEffect(() => {
-        console.log(currUser)
-    }, [currUser])
-    return <div className="h-screen">
+    return <div className="text-white">
         <Navbar></Navbar>
-        <JoinMatch />
+        <div className="flex flex-col ml-12 my-2 w-[80%] space-y-1">
+            <h3 className="font-headerFont text-3xl">CodeBlitz</h3>
+            <p className="text-sm font-basicFont ml-[0.4rem]">Make interview prep more exciting by competing in coding matches against other developers</p>
+        </div>
+        <div className="flex h-64 justify-center items-center">
+            <JoinMatch />
+        </div>
     </div>
 }
 
@@ -33,11 +35,16 @@ function JoinMatch() {
     }, [])
 
     //Connect player to socket 
-    return <div className="flex flex-row justify-center items-center h-screen">
-        <Button href="/lobby">Join Match</Button>
-    </div>
+    return <div className="flex flex-row w-[50%] justify-center items-center space-x-6 text-white">
+        <div className="flex flex-col bg-[#1F1B24] rounded-[4px] p-2 items-center space-y-1 w-38">
+            <p className="text-sm font-basicFont">Play against anyone</p>
+            <img src={earthIcon} className="h-24 w-[80%]"></img>
+            <Button href="/lobby" sx={{ color: 'white', padding: '10px' }}>Random Match</Button>
+        </div>
+        <div className="flex flex-col bg-[#1F1B24] rounded-[4px] p-2 items-center space-y-1 w-38">
+            <p className="text-sm font-basicFont">Play against friends</p>
+            <img src={lockIcon} className="h-24 w-[80%]"></img>
+            <Button href="/privateLobby" sx={{ color: 'white', padding: '10px' }}>Private Match </Button>
+        </div>
+    </div >
 }
-
-//Whenever a player starts a match a socket needs to create a seperate game
-//and once the game is ready the player will get routed to the link
-//If a player has started a match have the websocket route them to a game that is already open

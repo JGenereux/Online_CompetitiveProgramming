@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'lato';
+    src: url('./assets/Fonts/Lato-Light.ttf')
+}
+
+@font-face {
+    font-family: 'ubuntu';
+    src: url('./assets/Fonts/Ubuntu-Bold.ttf')
+}
+
+
+@font-face {
+    font-family: 'basicText';
+    src: url('./assets/Fonts/Lato-Regular.ttf')
+}

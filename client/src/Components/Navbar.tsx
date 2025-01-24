@@ -10,10 +10,10 @@ export default function Navbar() {
     const HandleAccount = () => {
         setOpenAccount((account) => !account)
     }
-    return <div className="flex flex-row dark:bg-slate-800 flex-wrap w-full z-50 static items-center text-white">
+    return <div className="flex flex-row flex-wrap w-full z-50 static items-center text-white font-customFont">
         <div className="space-x-4 ml-4">
             <a href="/" className="text-sm">Home</a>
-            <a href="/about" className="text-sm">About</a>
+            <a href="/about" className="text-sm">Leaderboards</a>
         </div>
 
         <div className="flex flex-col ml-auto my-2 mr-4">
@@ -37,7 +37,7 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
     return (
         <div className="flex flex-col">
             <div className="flex flex-row items-center space-x-1">
-                {(currUser && currUser.userName.length > 0) ? <p className="text-sm font-mono" > {currUser.userName}</p > : <p className="text-sm font-mono"> not logged in</p >}
+                {(currUser && currUser.userName.length > 0) ? <p className="text-sm " > {currUser.userName}</p > : <p className="text-sm"> not logged in</p >}
                 <AccountCircle sx={{ width: '18px', height: '18px', cursor: 'pointer' }} onClick={HandleAccount} />
             </div>
             <div className="flex flex-col ml-auto text-[12px]">
@@ -53,7 +53,7 @@ function NormalAcctDisplay({ HandleAccount }: AcctDisplayProps) {
     const { currUser } = useUser()
 
     return <div className="flex flex-row items-center space-x-1">
-        {(currUser && currUser.userName.length > 0) ? <p className="text-sm font-mono">{currUser.userName}</p> : <p className="text-sm font-mono"> not logged in</p >}
+        {(currUser && currUser.userName.length > 0) ? <p className="text-sm ">{currUser.userName}</p> : <p className="text-sm"> not logged in</p >}
         <AccountCircle sx={{ width: '18px', height: '18px', cursor: 'pointer' }} onClick={HandleAccount} />
     </div>
 }

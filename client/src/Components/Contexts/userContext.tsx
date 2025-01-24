@@ -45,18 +45,17 @@ interface UserProviderProps {
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [currUser, setUser] = useState<User>(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : defaultUser;
   });
 
-  //used to store and update user in localStorage
   useEffect(() => {
-    if (currUser !== defaultUser) {
-      localStorage.setItem('user', JSON.stringify(currUser))
+    if (currUser.userEmail) {
+      sessionStorage.setItem('user', JSON.stringify(currUser));
     } else {
-      localStorage.removeItem('user')
+      sessionStorage.removeItem('user');
     }
-  }, [currUser])
+  }, [currUser]);
 
   const loginUser = (userInfo: User) => {
     setUser(userInfo)
@@ -71,7 +70,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const logoutUser = () => {
     setUser(defaultUser)
-    localStorage.removeItem('user')
   }
 
   return (

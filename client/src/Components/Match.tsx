@@ -8,13 +8,18 @@ import { socket } from "../socket";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "./Contexts/userContext";
 
+interface Test {
+    expectedResult: string,
+    case: Record<'key2' | 'key3', string>,
+}
+
 interface QuestionInterface {
     content: string,
     difficulty: string,
     hints: string[],
     title: string,
     topicTags: string[],
-    testCases: string[]
+    testCases: Test[],
 }
 
 interface testCase {
@@ -37,6 +42,7 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
     const [currLanguageVersion, setCurrLanguageVersion] = useState<string>("18.15.0")
     const [codeResponse, setCodeResponse] = useState<string[]>([])
     const [testCases, setTestCases] = useState<testCase[]>([])
+    const [expectedOutputs, setExpectedOutputs] = useState<string[]>([]);
 
     const navigate = useNavigate();
     const params = useParams();
@@ -58,12 +64,20 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
             }
         })
 
+        //navigates the user to the result page to show user's that played
+        //and their scores
         socket.on('gameResult', ({ result, message }) => {
             if (result) {
                 window.alert(message)
                 navigate(`/result/${id}`, { replace: true })
             }
         })
+
+        if (!expectedOutputs || expectedOutputs.length == 0) {
+            question.testCases.forEach((question) => {
+                setExpectedOutputs((outputs) => [...outputs, question.expectedResult])
+            })
+        }
 
         return () => {
             socket.off('playerDisconnected')
@@ -99,7 +113,6 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
             })
 
             if (passed) {
-                console.log('updating exp')
                 updateUserExp(updatedExp)
             }
 
@@ -113,11 +126,20 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
 
     return <div className="flex flex-row my-5">
         <Question question={question} />
-        <div className="flex flex-col space-y-5 w-[55%]">
-            <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
-            <Editor height="300px" width="100%" theme="vs-dark" defaultLanguage="javascript" defaultValue="// some comment" value={value} onChange={(value) => setValue(String(value))} />
-            <Button sx={{ marginRight: 'auto', height: '10px', fontSize: '12px' }} onClick={RunCode}>Run</Button>
-            <Output codeResponse={codeResponse} testCases={testCases} numTestCases={question.testCases.length}></Output>
+        <div className="flex flex-col space-y-5 w-[50%] ml-auto mr-2">
+            <div className="flex flex-col">
+                <div className="flex flex-row bg-[#1e1e1e] w-fit">
+                    <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
+                    <Button sx={{ height: '26px', fontSize: '12px', color: 'white' }} onClick={RunCode}>Run</Button>
+                </div>
+                <Editor height="300px" width="100%" theme="vs-dark" defaultLanguage="javascript" defaultValue="// some comment" options={{
+                    minimap: { enabled: false }, lineNumbersMinChars: 2, scrollbar: {
+                        vertical: "hidden", // Hide vertical scrollbar
+                        horizontal: "hidden", // Hide horizontal scrollbar
+                    }
+                }} value={value} onChange={(value) => setValue(String(value))} />
+            </div>
+            <Output expectedCases={expectedOutputs} codeResponse={codeResponse} testCases={testCases} numTestCases={question.testCases.length}></Output>
         </div>
     </div>
 }
@@ -131,26 +153,29 @@ interface QuestionProps {
 }
 
 function Question({ question }: QuestionProps) {
-    return <div className="w-2/5 ml-4 my-20">
-        {(question && question.content.length > 0) && <div className="text-white">
-            <p className="text-[12px] whitespace-pre-wrap">{question.content}</p>
-        </div>}
+    return <div className="w-[46%] ml-3 text-white bg-[#1e1e1e] pl-2 py-3 rounded-sm">
+        <h3 className="text-lg mb-2 font-headerFont">{question.title}</h3>
+        <div className="">
+            {(question && question.content.length > 0) && <div className="flex flex-col space-y-2">
+                <p className="text-[12px] whitespace-pre-wrap font-basicFont">{question.content}</p>
+            </div>}
+        </div>
     </div>
 }
 
 interface OutputProps {
-    codeResponse: string[],
-    testCases: testCase[],
-    numTestCases: number,
+    expectedCases: string[];
+    codeResponse: string[];
+    testCases: testCase[];
+    numTestCases: number;
 }
 /**
  * Returns a div containing the output box for the user's code output
  * @param codeResponse string containing the output of the user's code
  * @returns 
  */
-function Output({ codeResponse, testCases, numTestCases }: OutputProps) {
+function Output({ expectedCases, codeResponse, testCases, numTestCases }: OutputProps) {
     const [selectedCase, setSelectedCase] = useState<number | null>(1)
-
     //needs to be changed to match number of testCases
     const tests = Array.from({ length: numTestCases != 0 ? numTestCases : 3 }, (_, i) => i + 1);
 
@@ -158,23 +183,24 @@ function Output({ codeResponse, testCases, numTestCases }: OutputProps) {
         <div>
             <div className="flex flex-row space-x-4">
                 {tests.map((index) => {
-                    return <div key={index}>
+                    return <div key={index} className="font-headerFont">
                         {(testCases && testCases[index - 1]) ?
                             <h3 className={testCases[index - 1].passed == true ? `text-green-400 ml-1 text-sm` : `text-red-600 ml-1 text-sm`} onClick={() => setSelectedCase(index)}>Test Case {index}</h3>
                             : <h3 className="text-white ml-1 text-sm" onClick={() => setSelectedCase(index)}>Test Case {index}</h3>}
                     </div>
                 })}
             </div>
-            <div className="bg-[#1e1e1e] w-full h-[100px]">
-                {selectedCase != null && <div>
+            <div className="bg-[#1e1e1e] w-full h-[100px] font-basicFont">
+                {(selectedCase != null && expectedCases) && <div>
                     {testCases[selectedCase - 1] ? <div>
                         <p className="pl-1 py-1 text-xs text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
                         <p className="pl-1 py-1 text-xs text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
                         <p className="pl-1 py-1 text-xs text-white">Your output: {codeResponse[selectedCase - 1]}</p>
-                    </div> : <div></div>
+                    </div> : <div>
+                        <p className="pl-1 py-1 text-xs text-white">Expected Output: {expectedCases[selectedCase - 1]}</p>
+                    </div>
                     }
                 </div>}
-
             </div>
         </div>
     )

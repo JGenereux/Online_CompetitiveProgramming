@@ -8,6 +8,13 @@ import Result from "./Components/Result"
 import { UserProvider } from "./Components/Contexts/userContext"
 import Login from "./Components/Login"
 import SignupForm from "./Components/SignUpForm"
+import PrivateLobby from "./Components/PrivateLobby"
+import { ProtectedRoute } from "./Components/Contexts/ProtectedRoutes"
+
+interface Test {
+  expectedResult: string,
+  case: Record<'key2' | 'key3', string>,
+}
 
 interface QuestionInterface {
   content: string,
@@ -15,7 +22,7 @@ interface QuestionInterface {
   hints: string[],
   title: string,
   topicTags: string[],
-  testCases: string[]
+  testCases: Test[]
 }
 
 
@@ -87,9 +94,18 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignupForm />} />
-          <Route path="/lobby" element={<Lobby />} />
-          <Route path="/lobby/:id" element={<Match question={question} setQuestion={setQuestion} value={value} setValue={setValue} />} />
-          <Route path="/result/:id" element={<Result />} />
+          <Route
+            path="/lobby"
+            element={
+              <ProtectedRoute>
+                <Lobby isPublic={true} />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/lobby/:id" element={<ProtectedRoute> <Match question={question} setQuestion={setQuestion} value={value} setValue={setValue} /> </ProtectedRoute>} />
+          <Route path="/privateLobby" element={<ProtectedRoute> <PrivateLobby /> </ProtectedRoute>} />
+          <Route path="/privateLobby/:id" element={<ProtectedRoute> <Lobby isPublic={false} /> </ProtectedRoute>} />
+          <Route path="/result/:id" element={<ProtectedRoute> <Result /> </ProtectedRoute>} />
         </Routes>
       </BrowserRouter >
     </UserProvider>

@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react";
 import { socket } from '../socket';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
+import copyIcon from '../assets/Images/copyIcon.png'
 
-export default function Lobby() {
+interface LobbyProps {
+    isPublic: boolean;
+}
+export default function Lobby({ isPublic }: LobbyProps) {
     return (
         <div>
             <Navbar />
-            <WaitingLobby />
+            <WaitingLobby isPublic={isPublic} />
         </div>
     )
 }
 
-function WaitingLobby() {
+function WaitingLobby({ isPublic }: LobbyProps) {
     //need to make a global context for all running lobbyID's to be stored in
     const [playerCount, setPlayerCount] = useState(0);
-
+    const params = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         socket.emit('joinMatch')
 
-        socket.on('roomUpdate', ({ roomName, playersInRoom }) => {
-            console.log("You've joined ", roomName)
+        socket.on('roomUpdate', ({ playersInRoom }) => {
             setPlayerCount(playersInRoom); // Update the player count state
         });
 
@@ -37,12 +40,27 @@ function WaitingLobby() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const copyLink = async () => {
+        try {
+            const { id } = params;
+            const link = `http://localhost:5173/privateLobby/${id}`
+            await navigator.clipboard.writeText(link);
+            alert('link copied to clipboard')
+        } catch (err) {
+            alert('Failed to copy the link: ' + err);
+        }
+    }
+
     return (
-        <div>
-            <div className="flex flex-row ml-2 my-2">
+        <div className="flex flex-col items-center justify-center my-2 text-white">
+            <div className="flex flex-row">
                 <h3>Players: </h3>
                 <h3>{playerCount}/2</h3>
             </div>
+            {!isPublic && <div className="flex flex-row">
+                <p>Invite friends</p>
+                <img src={copyIcon} className="h-6" onClick={copyLink}></img>
+            </div>}
         </div >
     );
 }

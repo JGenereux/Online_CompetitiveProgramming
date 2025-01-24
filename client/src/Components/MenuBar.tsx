@@ -70,8 +70,14 @@ export default function MenuBar({ currLanguage, setCurrLanguage, setCurrLanguage
 
     return (
         <div>
-            <h3 className="text-white text-xs ml-1">Language</h3>
             <Button
+                sx={{
+                    width: '100px',
+                    height: '26px',
+                    bgcolor: '#1e1e1e',
+                    fontSize: '10px',
+                    alignContent: 'center'
+                }}
                 id="demo-customized-button"
                 aria-controls={open ? 'demo-customized-menu' : undefined}
                 aria-haspopup="true"
@@ -84,18 +90,21 @@ export default function MenuBar({ currLanguage, setCurrLanguage, setCurrLanguage
                 {currLanguage}
             </Button>
             <StyledMenu
+                sx={{ padding: '0px', margin: '0px' }}
                 id="demo-customized-menu"
                 anchorEl={anchorEl}
                 open={open}
-                sx={{
-                    height: '200px',
-                }}
-                onClose={handleClose}
+                onClose={() => setAnchorEl(null)}
             >
-                {languages.map(({ language, version }) => {
-                    return <div key={language} onClick={() => handleClose(language, version)} className="cursor-pointer">{language}</div>; // This renders the language in the UI
-                })}
-
+                {languages.map(({ language, version }, index) => (
+                    <div
+                        key={index}
+                        onClick={() => handleClose(language, version)}
+                        className="cursor-pointer"
+                    >
+                        {language}
+                    </div>
+                ))}
             </StyledMenu>
         </div>
     );

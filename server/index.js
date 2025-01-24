@@ -5,6 +5,7 @@ const cors = require('cors')
 const fs = require('fs')
 const Question = require('./Objects/Question')
 const questionNames = require('./Objects/questionNames')
+const ResultLobbies = require('./Objects/ResultLobbies')
 const User = require('./Models/users')
 require('dotenv').config()
 
@@ -21,7 +22,7 @@ app.use(express.json())
 const PORT = 5000;
 
 //Conncect to mongodb database
-const url = process.env.ATLAS_URL;
+const url = process.env.ATLAS_URI;
 mongoose.connect(url)
 //alert console that mongoose database is connected
 const connection = mongoose.connection;
@@ -79,6 +80,7 @@ const getQuestionExperience = (questionDifficulty) => {
     return experience;
 }
 
+const winners = [];
 app.get('/question/runTest', async (req, res) => {
     const {userCode, currLanguage, languageVersion, lobbyID, userName, questionDifficulty} = req.query;
     
@@ -113,11 +115,16 @@ app.get('/question/runTest', async (req, res) => {
                 if(lobby.lobbyID == lobbyID) {
                     const roomName = lobby.roomName
                     resultRes.updatedExp = rewardedExp
+
+                    const playerAdded = winners.find((winner) => winner.userName == userName)
+                    if(!playerAdded) {
+                        const resultRoomName = 'result' + String(lobby.lobbyID)
+                        winners.push({roomName: resultRoomName, userName: userName, userOutput: userCode})
+                    }
                     destroyLobby(roomName)
                 }
             })
         } 
-
         return res.json(resultRes)
     } catch(error) {
         console.log(error)
@@ -160,6 +167,8 @@ const lobbies = [];
 const sockets = new Set();
 const roomSocketInfo = [];
 const roomsBeingCreated = new Set();
+const resultRooms = new ResultLobbies()
+const roomSockets = new Set()
 
 const lobbyExist = (lobbyID) => {
     //check if roomData has been stored in lobbies
@@ -250,6 +259,54 @@ io.on('connect', (socket) => {
         }
         })
 
+        socket.on('resultLobbyCreated', async ({lobbyID, user}) => {
+            //add socket to roomName result/lobbyID
+            if(roomSockets.has(socket.id)) {
+                return
+            }
+            roomSockets.add(socket.id)
+            const roomName = 'result' + String(lobbyID)
+            socket.join(roomName)
+
+            const roomSize = io.sockets.adapter.rooms.get(roomName)?.size || 0;
+            
+            const {userName, experience, level} = user;
+
+            const currUser = {
+                userName: userName,
+                experience: experience,
+                level: level
+            }
+
+            await resultRooms.addUser(lobbyID, currUser)
+            
+            if(roomSize == 2) {
+                const winner = winners.find((winner) => {
+                    return winner.roomName == roomName
+                })
+
+                if(winner) {
+                    //currentRoom is an array of players
+                    const currentRoom = await resultRooms.getLobby(lobbyID)
+                    io.to(roomName).emit('notifyResult', {playersInRoom: currentRoom, winner: winner.userName, winnerCode: winner.userOutput})
+                    
+                    //remove room from winners array
+                    const roomIndex = winners.findIndex((winner) => {
+                        return winner.roomName == roomName
+                    })
+                    if(roomIndex !== -1) {
+                        winners.splice(roomIndex, 1)
+                    }
+                }
+            }
+        })
+
+        socket.on('createPrivate', () => {
+            const lobbyID = randomUUID()
+            //send user id to redirect to
+            io.to(socket.id).emit('privateCreated', {lobbyId: lobbyID})
+        })
+
         socket.on('disconnect', () => {
             let roomName = ""
             roomSocketInfo.forEach((room, index) => {
@@ -272,6 +329,10 @@ io.on('connect', (socket) => {
 
             if(sockets.has(socket.id)) {
                 sockets.delete(socket.id)
+            }
+
+            if(roomSockets.has(socket.id)) {
+                roomSockets.delete(socket.id)
             }
         })
 })
