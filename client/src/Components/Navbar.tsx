@@ -10,21 +10,23 @@ export default function Navbar() {
         setOpenAccount((account) => !account)
     }
 
-    return <div className="flex flex-row flex-wrap w-full z-50 static items-center text-white font-customFont">
-        <div className="space-x-4 ml-4">
+    return <div className="flex flex-col sm:flex-row w-screen z-50 static justify-center md:justify-normal items-center text-white font-customFont">
+        <div className="space-x-4 ml-4 my-2 sm:my-0">
             <a href="/" className="text-sm">Home</a>
             <a href="/about" className="text-sm">Leaderboards</a>
         </div>
 
-        <div className="flex flex-col ml-auto my-2 mr-4">
-            {openAccount ? <>
-                <AcctOptionsDisplay HandleAccount={HandleAccount} />
-            </> :
-                <>
-                    <NormalAcctDisplay HandleAccount={HandleAccount} />
-                    <ProgressBar />
-                </>
-            }
+        <div className="sm:ml-auto">
+            <div className="flex flex-col sm:my-2 sm:mr-4">
+                {openAccount ? <>
+                    <AcctOptionsDisplay HandleAccount={HandleAccount} />
+                </> :
+                    <>
+                        <NormalAcctDisplay HandleAccount={HandleAccount} />
+                        <ProgressBar />
+                    </>
+                }
+            </div>
         </div>
     </div>
 }

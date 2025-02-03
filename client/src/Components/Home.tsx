@@ -22,7 +22,6 @@ export default function Home() {
 }
 
 function JoinMatch() {
-
     //on component mount connect user socket
     useEffect(() => {
         socket.on('connect', () => {
@@ -35,15 +34,15 @@ function JoinMatch() {
     }, [])
 
     return <div className="flex flex-row w-[50%] justify-center items-center space-x-6 text-white">
-        <div className="flex flex-col bg-[#1F1B24] rounded-[4px] p-2 items-center space-y-1 w-38">
-            <p className="text-sm font-basicFont">Play against anyone</p>
-            <img src={earthIcon} className="h-24 w-[80%]"></img>
-            <Button href="/lobby" sx={{ color: 'white', padding: '10px' }}>Random Match</Button>
+        <div className="flex flex-col bg-[#1F1B24] space-y-1 w-[40%] rounded-[4px] p-2 items-center text-center text-xs md:text-sm">
+            <p className="font-basicFont">Play against anyone</p>
+            <img src={earthIcon} className="w-[100%] md:w-[80%]"></img>
+            <Button href="/lobby" sx={{ color: 'white', padding: '10px', fontSize: ['12px', '14px'] }}>Random Match</Button>
         </div>
-        <div className="flex flex-col bg-[#1F1B24] rounded-[4px] p-2 items-center space-y-1 w-38">
-            <p className="text-sm font-basicFont">Play against friends</p>
-            <img src={lockIcon} className="h-24 w-[80%]"></img>
-            <Button href="/privateLobby" sx={{ color: 'white', padding: '10px' }}>Private Match </Button>
+        <div className="flex flex-col bg-[#1F1B24] space-y-1 w-[40%] rounded-[4px] p-2 items-center text-center text-xs md:text-sm">
+            <p className="font-basicFont">Play against friends</p>
+            <img src={lockIcon} className="w-[100%] md:w-[80%]"></img>
+            <Button href="/privateLobby" sx={{ color: 'white', padding: '10px', fontSize: ['12px', '14px'] }}>Private Match </Button>
         </div>
     </div >
 }
