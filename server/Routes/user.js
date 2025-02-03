@@ -24,7 +24,6 @@ const getOAuthInfo = async (access_token) => {
 router.route('/login').post(async (req,res) => {
     //Get user's email
     const {accessToken} = req.body;
-    console.log(accessToken)
     if(!accessToken) {
         return res.status(404).json('Access token not provided');
     }

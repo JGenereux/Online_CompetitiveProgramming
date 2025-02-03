@@ -76,7 +76,7 @@ export default function MenuBar({ currLanguage, setCurrLanguage, setCurrLanguage
                     height: '26px',
                     bgcolor: '#1e1e1e',
                     fontSize: '10px',
-                    alignContent: 'center'
+                    alignContent: 'center',
                 }}
                 id="demo-customized-button"
                 aria-controls={open ? 'demo-customized-menu' : undefined}
@@ -100,7 +100,7 @@ export default function MenuBar({ currLanguage, setCurrLanguage, setCurrLanguage
                     <div
                         key={index}
                         onClick={() => handleClose(language, version)}
-                        className="cursor-pointer"
+                        className="cursor-pointer pl-2"
                     >
                         {language}
                     </div>

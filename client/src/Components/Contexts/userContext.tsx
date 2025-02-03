@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import axios from "axios";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 interface User {
@@ -12,7 +13,7 @@ interface User {
 interface UserContextType {
   currUser: User | null;
   loginUser: (userInfo: User) => void;
-  updateUserExp: (experience: number) => void;
+  updateUser: () => void;
   logoutUser: () => void;
 }
 
@@ -24,13 +25,12 @@ const defaultUser: User = {
   level: 0,
 };
 
-// Define and export context
 export const UserContext = createContext<UserContextType>({
   currUser: defaultUser,
   loginUser: () => {
     throw new Error("loginUser function must be used within UserProvider");
   },
-  updateUserExp: () => {
+  updateUser: () => {
     throw new Error("updateUserExp function must be used within UserProvider");
   },
   logoutUser: () => {
@@ -61,19 +61,33 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     setUser(userInfo)
   }
 
-  const updateUserExp = (experience: number) => {
-    setUser({
-      ...currUser,
-      experience: currUser.experience + experience
-    })
+  const updateUser = async () => {
+    if (!currUser) return;
+
+    try {
+      const res = await axios.get(`http://localhost:5000/users/retrieveUser?email=${currUser.userEmail}`)
+      console.log(res);
+      const { experience, level, userEmail, userName, questionsSolved } = res.data;
+      setUser({
+        userName: userName,
+        userEmail: userEmail,
+        experience: experience,
+        level: level,
+        questionsSolved: questionsSolved,
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const logoutUser = () => {
+    if (!currUser) return;
+    sessionStorage.removeItem('user');
     setUser(defaultUser)
   }
 
   return (
-    <UserContext.Provider value={{ currUser, loginUser, updateUserExp, logoutUser }}>
+    <UserContext.Provider value={{ currUser, loginUser, updateUser, logoutUser }}>
       {children}
     </UserContext.Provider >
 

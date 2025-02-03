@@ -34,7 +34,6 @@ function JoinMatch() {
         }
     }, [])
 
-    //Connect player to socket 
     return <div className="flex flex-row w-[50%] justify-center items-center space-x-6 text-white">
         <div className="flex flex-col bg-[#1F1B24] rounded-[4px] p-2 items-center space-y-1 w-38">
             <p className="text-sm font-basicFont">Play against anyone</p>

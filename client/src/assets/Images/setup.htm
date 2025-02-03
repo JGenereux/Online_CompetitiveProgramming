@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html style="height:100%; width:100%;">
+<head>
+  <title>Jigsaw</title>
+  <link rel="stylesheet" href="/assets/application-8b3a372d16e7766cb3d0a198bd3a02a478a2fd7ad7402479d92fe519320d33d5.css" media="all" />
+  <script src="/assets/application-e1606d8e2c45d8b01666307dc4655ed8a9c56aeef74382775cf5038d1841b473.js"></script>
+  <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="jkm9j8b3fT0xklZCPjV2gb4KV9pFivbJ-Z_gZ6hrDoxgvxSJRzhQlws-1fg6h5wcM4JMC-pwKiRezuke76sDLw" />
+    <meta name="robots" content="noindex">
+
+  <style>
+
+
+html {
+  -ms-touch-action: none; /* Direct all pointer events to JavaScript code. */
+  touch-action: none;
+}
+  </style>
+
+  <script type="text/javascript">
+   if(typeof VST !== 'undefined'){
+     VST.brand                 = "vitalsource";
+     VST.pageViewFlags         = {"dash":true,"epub":true,"pbk":true};
+     VST.requestReferer        = "jigsaw.vitalsource.com";
+     VST.pageViewDuration      = 3000;
+     VST.pageViewFlushInterval = 90000
+   }
+  </script>
+</head>
+<body style="height:100%; width:100%; padding:0; margin:0;">
+  
+<script type="text/javascript">
+  if(typeof VST === 'undefined' && typeof parent.VST !== 'undefined'){
+    var VST = parent.VST;
+  }
+
+  if(typeof VST !== 'undefined'){
+    /* VST.window   = VST.window || window;
+     * VST.document = VST.document || document;
+     */
+
+    VST.$(document).ready(function(){
+      var data = {
+        status : 'error',
+        message: 'Unauthorized',
+        code   :  401
+      };
+
+        data.jigsawCode = ''
+
+      // Rich still needs this, I believe
+      VST.fire('page:ready', data);
+      VST.fire('page:load', data);
+
+      if(!VST.window || VST.window !== window) {
+        VST.fire('viewer:create', data);
+      }
+    });
+  }
+</script>
+
+<div><a href="#popup-signin" id="popup-signin">Click to Sign In</a></div>
+
+<script type="text/javascript">
+  var watchForPopupClose = function(popup, callback){
+    var checkIt = window.setInterval(function(){
+      if(popup.closed !== false){
+        window.clearInterval(checkIt);
+        callback();
+      }
+    }, 200);
+  };
+
+  $(document).ready(function(){
+    VST.Jigsaw.trigger('viewer:unauthorized');
+  });
+  $('#popup-signin').click(function(e){
+    e.preventDefault();
+
+    var url        = '/login'
+      , windowName = 'Login'
+      , extra      = 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, height=500, width=600';
+
+    var popup;
+
+    if(typeof VST !== 'undefined' && typeof VST.Jigsaw !== 'undefined'){
+      VST.Jigsaw.socket.topURL(function(topURL){
+        url += '&from='+topURL;
+        popup = window.open(url, windowName, extra);
+        watchForPopupClose(popup, function(){
+          VST.Jigsaw.trigger('viewer:recreate');
+        });
+      });
+    }else{
+      popup = window.open(url, windowName, extra);
+      watchForPopupClose(popup, function(){
+        window.location.reload();
+      });
+    }
+  });
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'90790168cf932dbb',t:'MTczNzgxNTg5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>

@@ -12,10 +12,10 @@ export default function ProgressBar() {
 
     useEffect(() => {
         if (!currUser) return;
-        console.log(currUser.experience)
         //Calculate user's percentage of completion of current level
-        const nextLevel = currUser.level + 3
+        const nextLevel = currUser.level + 1;
         const nextLevelExp = levels.levels[nextLevel.toString() as keyof typeof levels.levels];
+
         //user's experience should ALWAYS be less than levelExp. This component does not update the user's level
         if (currUser.experience < nextLevelExp) {
             const expPercent = (currUser.experience / nextLevelExp) * 100;

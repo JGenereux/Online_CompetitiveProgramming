@@ -7,6 +7,7 @@ import MenuBar from "./MenuBar";
 import { socket } from "../socket";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "./Contexts/userContext";
+import { UseQuestion } from "./Contexts/questionContext";
 
 interface Test {
     expectedResult: string,
@@ -28,14 +29,9 @@ interface testCase {
     passed: boolean
 }
 
-interface MatchProps {
-    question: QuestionInterface,
-    setQuestion: (question: QuestionInterface) => void,
-    value: string,
-    setValue: (value: string) => void;
-}
-export default function Match({ question, setQuestion, value, setValue }: MatchProps) {
-    const { currUser, updateUserExp } = useUser()
+export default function Match() {
+    const { question, value, resetQuestion, setValue } = UseQuestion()
+    const { currUser, updateUser } = useUser()
 
     const [questionPassed, setQuestionPassed] = useState<boolean>(false);
     const [currLanguage, setCurrLanguage] = useState<string>('javascript')
@@ -54,6 +50,7 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
             if (disconnected) {
                 window.alert('One of the users left. The game is now ending!')
                 navigate('/', { replace: true })
+                resetQuestion();
             }
         })
 
@@ -61,6 +58,7 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
             if (disconnected) {
                 window.alert(message)
                 navigate('/', { replace: true })
+                resetQuestion();
             }
         })
 
@@ -86,6 +84,21 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
         }
     }, [])
 
+    //When the user switches their language ensure they get the appropriate function call
+    //switched
+    useEffect(() => {
+        const updateCalls = async () => {
+            try {
+                const res = await axios.post('http://localhost:5000/question/update', { currLanguage: currLanguage, question: question })
+                setValue(res.data.functionCall)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        updateCalls()
+    }, [currLanguage, question])
+
+
     //Pass userName & questionDifficulty into get request
     /** backend 
      *     -fetch how much xp the question was worth and add to user
@@ -97,13 +110,20 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
         try {
             const { id } = params;
             if (!currUser) {
-                console.log('logged u out')
                 return
             }
 
-            const res = await axios.get(`http://localhost:5000/question/runTest?userCode=${encodeURIComponent(value)}&currLanguage=${currLanguage}&languageVersion=${currLanguageVersion}&lobbyID=${id}&userName=${currUser.userName}&questionDifficulty=${question.difficulty}`)
+            const runTestInfo = {
+                userCode: value,
+                currLanguage: currLanguage,
+                languageVersion: currLanguageVersion,
+                lobbyID: id,
+                userName: currUser.userName,
+                question: question
+            }
+            const res = await axios.post(`http://localhost:5000/question/runTest`, runTestInfo)
 
-            const { testsPassed, updatedExp, passed } = res.data;
+            const { testsPassed, passed } = res.data;
 
             const caseResults = testsPassed;
             const responses: string[] = [];
@@ -113,7 +133,7 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
             })
 
             if (passed) {
-                updateUserExp(updatedExp)
+                updateUser();
             }
 
             setTestCases(testsPassed);
@@ -132,11 +152,13 @@ export default function Match({ question, setQuestion, value, setValue }: MatchP
                     <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
                     <Button sx={{ height: '26px', fontSize: '12px', color: 'white' }} onClick={RunCode}>Run</Button>
                 </div>
-                <Editor height="300px" width="100%" theme="vs-dark" defaultLanguage="javascript" defaultValue="// some comment" options={{
+                <Editor height="300px" width="100%" theme="vs-dark" defaultLanguage="javascript" language={currLanguage} defaultValue="// some comment" options={{
                     minimap: { enabled: false }, lineNumbersMinChars: 2, scrollbar: {
                         vertical: "hidden", // Hide vertical scrollbar
                         horizontal: "hidden", // Hide horizontal scrollbar
-                    }
+                    },
+                    fontSize: 12,
+                    lineHeight: 18,
                 }} value={value} onChange={(value) => setValue(String(value))} />
             </div>
             <Output expectedCases={expectedOutputs} codeResponse={codeResponse} testCases={testCases} numTestCases={question.testCases.length}></Output>

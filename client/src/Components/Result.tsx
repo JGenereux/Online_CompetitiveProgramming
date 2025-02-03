@@ -5,6 +5,7 @@ import { socket } from "../socket";
 import { useParams } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import { Editor } from "@monaco-editor/react";
+import { UseQuestion } from "./Contexts/questionContext";
 
 interface Player {
     userName: string;
@@ -26,6 +27,8 @@ const testPlayer = [
 ]
 
 export default function Result() {
+    const { resetQuestion } = UseQuestion();
+
     const [players, setPlayers] = useState<Player[]>(testPlayer)
     const [winner, setWinner] = useState<string>('Jellybean')
     const [winnerCode, setWinnerCode] = useState<string>('')
@@ -40,6 +43,8 @@ export default function Result() {
             setPlayers(playersInRoom)
             setWinner(winner)
             setWinnerCode(winnerCode)
+
+            resetQuestion();
         })
 
         return () => {

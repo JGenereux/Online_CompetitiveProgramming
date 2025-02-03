@@ -4,12 +4,12 @@ import { useState } from "react"
 import { useUser } from "./Contexts/userContext"
 
 export default function Navbar() {
-
     const [openAccount, setOpenAccount] = useState(false)
 
     const HandleAccount = () => {
         setOpenAccount((account) => !account)
     }
+
     return <div className="flex flex-row flex-wrap w-full z-50 static items-center text-white font-customFont">
         <div className="space-x-4 ml-4">
             <a href="/" className="text-sm">Home</a>
@@ -17,7 +17,9 @@ export default function Navbar() {
         </div>
 
         <div className="flex flex-col ml-auto my-2 mr-4">
-            {openAccount ? <AcctOptionsDisplay HandleAccount={HandleAccount} /> :
+            {openAccount ? <>
+                <AcctOptionsDisplay HandleAccount={HandleAccount} />
+            </> :
                 <>
                     <NormalAcctDisplay HandleAccount={HandleAccount} />
                     <ProgressBar />
@@ -32,7 +34,13 @@ interface AcctDisplayProps {
 }
 
 function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
-    const { currUser } = useUser()
+    const { currUser, logoutUser } = useUser()
+
+
+    const HandleLogout = () => {
+        HandleAccount();
+        logoutUser();
+    }
 
     return (
         <div className="flex flex-col">
@@ -42,6 +50,7 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
             </div>
             <div className="flex flex-col ml-auto text-[12px]">
                 {currUser && currUser.userName.length > 0 ? <p>{
+                    <button className="ml-auto text-sm" onClick={HandleLogout}>Logout</button>
                     /*put settings and signout here */
                 }</p> : <a href="/login">Login</a>}
             </div>

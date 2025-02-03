@@ -3,18 +3,17 @@ const app = express();
 const mongoose = require("mongoose")
 const cors = require('cors')
 const fs = require('fs')
-const Question = require('./Objects/Question')
+const RunTests = require('./Objects/Question')
 const questionNames = require('./Objects/questionNames')
 const ResultLobbies = require('./Objects/ResultLobbies')
 const User = require('./Models/users')
+const { levels } = require('./levels');
 require('dotenv').config()
 
 
 const questionFuncs = require('./Routes/questionFuncs');
 const { randomUUID } = require('crypto');
 const { default: axios } = require('axios');
-
-const currentQuestion = new Question();
 
 app.use(cors());
 app.use(express.json())
@@ -48,17 +47,15 @@ app.get('/question', async (req, res) => {
     let funcCall = "";
     questionFuncs.questions.map((question) => {
         if(questionName == question.name) {
-            funcCall = question.functionCall
+            funcCall = question.functionCalls['javascript'] //default lang is set to javascript
             return;
         }
     })
 
     try{
-        fs.readFile(`../client/src/assets/Questions/${question}.txt`, async (err, data) => {
+        fs.readFile(`./Questions/${question}.txt`, async (err, data) => {
             if(err) throw err;
             if(funcCall && funcCall.length > 0) {
-                currentQuestion.SetQuestion(JSON.parse(data.toString()))
-                currentQuestion.SetFunctionCall(funcCall);
                 return res.status(200).json({lcQuestion: data.toString(), functionCall: funcCall})
             }
             return res.status(417).json("Can't retrieve functionCall");
@@ -80,42 +77,75 @@ const getQuestionExperience = (questionDifficulty) => {
     return experience;
 }
 
+app.post('/question/update', async (req, res) => {
+    const {currLanguage, question} = req.body;
+
+    const questionName = question.title.toLowerCase().replace(/ /g, '_');
+    let funcCall = "";
+    questionFuncs.questions.map((question) => {
+        if(questionName == question.name) {
+            funcCall = question.functionCalls[`${currLanguage}`]
+            return;
+        }
+    })
+
+    if(!funcCall) {
+        return res.status(500).json('Error running tests no function call provided')
+    }
+
+    return res.status(200).json({functionCall: funcCall})
+})
+
 const winners = [];
-app.get('/question/runTest', async (req, res) => {
-    const {userCode, currLanguage, languageVersion, lobbyID, userName, questionDifficulty} = req.query;
-    
+app.post('/question/runTest', async (req, res) => {
+    const {userCode, currLanguage, languageVersion, lobbyID, userName, question} = req.body;
+
+    const questionName = question.title.toLowerCase().replace(/ /g, '_');
+    let funcCall = "";
+    questionFuncs.questions.map((question) => {
+        if(questionName == question.name) {
+            funcCall = question.functionCalls[`${currLanguage}`]
+            return;
+        }
+    })
+
+    if(!funcCall) {
+        return res.status(500).json('Error running tests no function call provided')
+    }
+
     try{
-        const testsPassed = await currentQuestion.RunTests(userCode, currLanguage, languageVersion);
+        const testsPassed = await RunTests(question, funcCall, userCode, currLanguage, languageVersion);
     
         //check if all tests are passed
         let passed = testsPassed.every((result) => result.passed)
 
         const resultRes = {
             testsPassed,
-            updatedExp: 0,
             passed
         };
 
         //if all testcases are passed means game is now over.
         if(passed) {
-            //update user's experience
-            const rewardedExp = getQuestionExperience(questionDifficulty)
-            const user = await User.findOneAndUpdate(
-                { userName: userName },
-                    {
-                    $inc: { experience: rewardedExp }
-                    },
-                { new: true } 
-            )
+            const rewardedExp = getQuestionExperience(question.difficulty)
+            //fetch user and update the user.
+            const user = await User.findOne({userName: userName});
             if(!user) return res.status(400).json("Couldn't update user's experience")
         
+            user.experience += rewardedExp;
+            
+            const userLevel = user.level;
+            const nextLevelExp = levels[`${userLevel+1}`];
+            if(user.experience >= nextLevelExp) {
+                user.level += 1;
+            }
+            await user.save();
+      
             //use lobbyID to retrieve current room name
             //emit to all sockets in the room that someone has won
             lobbies.map((lobby) => {
                 if(lobby.lobbyID == lobbyID) {
                     const roomName = lobby.roomName
-                    resultRes.updatedExp = rewardedExp
-
+    
                     const playerAdded = winners.find((winner) => winner.userName == userName)
                     if(!playerAdded) {
                         const resultRoomName = 'result' + String(lobby.lobbyID)
@@ -185,7 +215,6 @@ let roomName = "lobby" + String(lobbyID)
 
 //central socket
 io.on('connect', (socket) => {
-    console.log("Welcome to the server: ", socket.id)
     //Listener for creating a match
     socket.on('joinMatch', async () => {
         try{
@@ -193,6 +222,12 @@ io.on('connect', (socket) => {
             if(sockets.has(socket.id)) return;
             sockets.add(socket.id)
 
+            let playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
+        
+            if(playersInRoom == 2) {
+                lobbyID = randomUUID();
+                roomName = "lobby" + String(lobbyID);
+            }
             //if there is no data for the currentRoom create it.
             //else add the socket's id to the room
             const existingRoom = roomSocketInfo.find((room) => room.roomName === roomName);
@@ -205,17 +240,9 @@ io.on('connect', (socket) => {
                 existingRoom.players.push(socket.id)
             }
             
-            let playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
-        
-            if(playersInRoom == 2) {
-                lobbyID = randomUUID();
-                roomName = "lobby" + String(lobbyID);
-            }
-
             socket.join(roomName)
             playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
-            console.log(socket.id, " has joined ", roomName)
-            
+        
             io.to(roomName).emit('roomUpdate', {roomName, playersInRoom})
 
             if(playersInRoom === 2) {
@@ -243,13 +270,13 @@ io.on('connect', (socket) => {
                         });
                     }
 
-                    io.to(roomName).emit('startMatch', { lobbyId: lobbyID})
                     io.to(roomName).emit('occuringMatch', {lcQuestion, functionCall} )
+                    io.to(roomName).emit('startMatch', { lobbyId: lobbyID})
                 } else if(roomData[roomName]){
                     const {lobbyID, lcQuestion, functionCall} = roomData[roomName];
 
-                    io.to(roomName).emit('startMatch', { lobbyId: lobbyID})
                     io.to(roomName).emit('occuringMatch', {lcQuestion, functionCall} )
+                    io.to(roomName).emit('startMatch', { lobbyId: lobbyID})
                 }
             }
         } catch(error) {
