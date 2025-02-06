@@ -16,7 +16,7 @@ export default function ProgressBar() {
         const nextLevel = currUser.level + 1;
         const nextLevelExp = levels.levels[nextLevel.toString() as keyof typeof levels.levels];
 
-        //user's experience should ALWAYS be less than levelExp. This component does not update the user's level
+        //user's experience should ALWAYS be less than levelExp. This component () does not update the user's level
         if (currUser.experience < nextLevelExp) {
             const expPercent = (currUser.experience / nextLevelExp) * 100;
             setPercentage(expPercent);
@@ -26,16 +26,16 @@ export default function ProgressBar() {
 
     return (
         <div className="flex flex-row items-center">
-            <div className="flex flex-row border-black border-2 w-[70%] h-[0.8rem] rounded-md">
+            <div className="flex flex-row border-y-blue-100 border-2 w-[70%] h-[0.8rem] rounded-md">
                 <div
-                    className="bg-[#b8ccbd] rounded-md text-center"
+                    className="bg-neutral-400 rounded-md text-center"
                     style={{ width: `${percentage}%` }}
                 >
-                    <p className="text-black text-[7px]">{percentage ? `${percentage.toFixed(1)}%` : ''}</p>
+                    <p className="text-black text-[7px] font-bold">{percentage ? `${percentage.toFixed(1)}%` : ''}</p>
                 </div>
             </div>
             <div className="ml-auto">
-                {currUser && <p className="text-xs">Lvl {currUser.level}</p>}
+                {currUser && <p className="text-xs md:text-sm">Lvl {currUser.level}</p>}
             </div>
         </div>
     )

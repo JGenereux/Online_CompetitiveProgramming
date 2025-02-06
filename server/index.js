@@ -330,7 +330,7 @@ io.on('connect', (socket) => {
 
         socket.on('createPrivate', () => {
             const lobbyID = randomUUID()
-            //send user id to redirect to
+            //send user id to redirect
             io.to(socket.id).emit('privateCreated', {lobbyId: lobbyID})
         })
 

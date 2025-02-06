@@ -49,7 +49,7 @@ const questionFuncs = {
           }
       },
       {
-          "name": "best_time_to_buy_and_sell_stock_1",
+          "name": "best_time_to_buy_and_sell_stock",
           "functionCalls": {
               "c++": "int maxProfit(vector<int>& prices) {\n\n}",
               "python": "def maxProfit(prices):\n",

@@ -5,7 +5,7 @@ import { Editor } from "@monaco-editor/react"
 import { Button } from "@mui/material";
 import MenuBar from "./MenuBar";
 import { socket } from "../socket";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import { useUser } from "./Contexts/userContext";
 import { UseQuestion } from "./Contexts/questionContext";
 
@@ -44,6 +44,16 @@ export default function Match() {
     const params = useParams();
 
     useEffect(() => {
+        //if the question didn't load (means error or user just entered a random id) and redirects back home
+        if (!question || question.content.length == 0) {
+            window.alert('Must start a game through the options on the home screen')
+            navigate('/', { replace: true })
+            resetQuestion();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
         const { id } = params;
 
         socket.on('playerDisconnected', ({ disconnected }) => {
@@ -68,6 +78,7 @@ export default function Match() {
             if (result) {
                 window.alert(message)
                 navigate(`/result/${id}`, { replace: true })
+                resetQuestion();
             }
         })
 
