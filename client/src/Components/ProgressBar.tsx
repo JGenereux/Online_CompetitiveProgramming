@@ -28,14 +28,14 @@ export default function ProgressBar() {
         <div className="flex flex-row items-center">
             <div className="flex flex-row border-y-blue-100 border-2 w-[70%] h-[0.8rem] rounded-md">
                 <div
-                    className="bg-neutral-400 rounded-md text-center"
+                    className="bg-neutral-400 rounded-md  text-center"
                     style={{ width: `${percentage}%` }}
                 >
                     <p className="text-black text-[7px] font-bold">{percentage ? `${percentage.toFixed(1)}%` : ''}</p>
                 </div>
             </div>
             <div className="ml-auto">
-                {currUser && <p className="text-xs md:text-sm">Lvl {currUser.level}</p>}
+                {currUser && <p className="text-xs">Lvl {currUser.level}</p>}
             </div>
         </div>
     )
