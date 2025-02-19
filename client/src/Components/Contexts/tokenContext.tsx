@@ -38,7 +38,7 @@ export const TokenProvider = ({ children }: TokenProviderProps) => {
         return storedRefreshToken ? storedRefreshToken : ""
     })
 
-    const { currUser } = useUser()
+    const { currUser, logoutUser } = useUser()
 
 
     async function GetToken(type: string): Promise<string | null> {
@@ -47,16 +47,24 @@ export const TokenProvider = ({ children }: TokenProviderProps) => {
             return null
         }
 
+        if (isTokenExpired(refreshToken)) {
+            logoutUser()
+            RemoveToken('accessToken')
+            RemoveToken('refreshToken')
+            window.location.replace('/login');
+            return null
+        }
+
         if (type == 'accessToken') {
-            try {
-                if (accessToken == null) {
+            if (accessToken && isTokenExpired(accessToken)) {
+                try {
                     const res = await axios.post('http://localhost:5000/users/token', { refreshToken: refreshToken, email: currUser?.userEmail })
                     SetToken('accessToken', res.data.accessToken)
                     return res.data.accessToken
+                } catch (error) {
+                    console.log(error)
+                    return null
                 }
-            } catch (error) {
-                console.log(error)
-                return null
             }
 
             if (accessToken.length == 0) return null
@@ -92,6 +100,15 @@ export const TokenProvider = ({ children }: TokenProviderProps) => {
     return <TokenContext.Provider value={{ accessToken, refreshToken, SetToken, RemoveToken, GetToken }}>
         {children}
     </TokenContext.Provider>
+}
+
+
+function isTokenExpired(token: string) {
+    if (!token) return true //missing token same case as expired
+
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const expiry = payload.exp * 1000
+    return Date.now() >= expiry
 }
 
 export const useToken = () => useContext(TokenContext)

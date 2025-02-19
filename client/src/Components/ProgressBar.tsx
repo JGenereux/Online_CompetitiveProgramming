@@ -25,7 +25,7 @@ export default function ProgressBar() {
     }, [currUser])
 
     return (
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center w-full justify-end space-x-2">
             <div className="flex flex-row border-y-blue-100 border-2 w-[60%] h-[0.8rem] rounded-md">
                 <div
                     className="bg-neutral-400 rounded-md  text-center"
@@ -34,8 +34,8 @@ export default function ProgressBar() {
                     <p className="text-black text-[7px] font-bold">{percentage ? `${percentage.toFixed(1)}%` : ''}</p>
                 </div>
             </div>
-            <div className="ml-auto">
-                {currUser && <p className="text-xs mr-2">Lvl {currUser.level}</p>}
+            <div className="">
+                {currUser && <p className="text-xs">Lvl {currUser.level}</p>}
             </div>
         </div>
     )

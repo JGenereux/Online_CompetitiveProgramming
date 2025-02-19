@@ -6,10 +6,10 @@ import lockIcon from '../assets/Images/secure-lock.png'
 document.body.style.backgroundColor = "#121212"
 
 export default function Home() {
-    return <div className="text-white">
+    return <div className="flex flex-col text-white">
         <Navbar></Navbar>
-        <div className="flex flex-col ml-12 my-2 w-[80%] space-y-1">
-            <h3 className="font-headerFont text-3xl">CodeBlitz</h3>
+        <div className="flex flex-col ml-6 md:ml-12 my-4 w-[80%] space-y-1">
+            <h3 className="font-headerFont text-3xl md:text-5xl">CodeBlitz</h3>
             <p className="text-sm font-basicFont ml-[0.4rem]">Make interview prep more exciting by competing in coding matches against other developers</p>
         </div>
         <div className="flex h-64 justify-center items-center">

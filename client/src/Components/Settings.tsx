@@ -152,7 +152,7 @@ function RecentQuestions({ questions }: AccountPageProps) {
             <div className="flex flex-col h-full">
                 {(questionsHead && questionsHead.length > 0) ? questionsHead.map(({ name, difficulty, topicTags }, index) => {
                     return <Question question={{ name, difficulty, topicTags }} page="account" key={index} />
-                }) : <DisplayNoneSolved />}
+                }) : <DisplayNoneSolved page="account" />}
             </div>
 
         </div>
@@ -217,13 +217,17 @@ function QuestionDashboard({ questions }: QuestionDashProps) {
         <div className="flex flex-col w-[80%] h-[80%] border-white border-2">
             {(questionsHead && questionsHead.length > 0) ? questionsHead.map(({ name, difficulty, topicTags }, index) => {
                 return <Question question={{ name, difficulty, topicTags }} page="solved" key={index} />
-            }) : <DisplayNoneSolved />}
+            }) : <DisplayNoneSolved page="solved" />}
         </div>
     </div>
 }
 
-function DisplayNoneSolved() {
-    return <div className="flex flex-row flex-wrap h-fit md:h-1/6 w-full border-white border-b-2 items-center">
+interface NoneSolvedProps {
+    page: string
+}
+
+function DisplayNoneSolved({ page }: NoneSolvedProps) {
+    return <div className={page === "account" ? "flex flex-row flex-wrap h-fit md:h-1/4 w-full border-white border-b-2 items-center" : "flex flex-row flex-wrap h-fit md:h-1/6 w-full border-white border-b-2 items-center"}>
         <div className="flex flex-row flex-wrap text-white mx-auto text-xs font-mono">
             <p>No questions solved</p>
         </div>

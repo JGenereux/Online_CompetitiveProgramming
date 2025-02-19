@@ -14,8 +14,9 @@ import Settings from "./Components/Settings"
 
 function App() {
   return (
-    <TokenProvider>
-      <UserProvider>
+
+    <UserProvider>
+      <TokenProvider>
         <QuestionProvider>
           <BrowserRouter>
             <Routes>
@@ -38,8 +39,8 @@ function App() {
             </Routes>
           </BrowserRouter >
         </QuestionProvider>
-      </UserProvider>
-    </TokenProvider>
+      </TokenProvider>
+    </UserProvider>
   )
 }
 

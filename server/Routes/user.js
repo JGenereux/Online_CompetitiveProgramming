@@ -44,7 +44,7 @@ router.route('/login').post(async (req,res) => {
         }
         
         const accessToken = generateAccessToken({email: email})
-        const refreshToken = jwt.sign({email: email}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1hr'})
+        const refreshToken = jwt.sign({email: email}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '24hr'})
         //add refreshToken to db
         //check if user has refreshTokens array
         const hasToken = await Token.findOne({email: email})
@@ -251,10 +251,11 @@ function authenticateToken(req, res, next) {
 
 router.route('/token').post(async(req, res) => {
     const {refreshToken, email} = req.body
-
+    
     if(refreshToken == null) return res.status(403)
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if(err) return res.status(403)
+            console.log('valid twin')
         const accessToken = generateAccessToken({email: email})
         res.status(200).json({accessToken: accessToken})
     })

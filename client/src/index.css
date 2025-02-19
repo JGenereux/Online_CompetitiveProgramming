@@ -8,12 +8,12 @@
 }
 
 @font-face {
-    font-family: 'ubuntu';
-    src: url('./assets/Fonts/Ubuntu-Bold.ttf')
+    font-family: 'headerFont';
+    src: url('./assets/Fonts/DarumadropOne-Regular.ttf')
 }
 
 
 @font-face {
     font-family: 'basicText';
-    src: url('./assets/Fonts/Lato-Regular.ttf')
+    src: url('./assets/Fonts/AtkinsonHyperlegibleMono-Medium.ttf')
 }

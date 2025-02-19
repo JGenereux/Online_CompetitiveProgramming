@@ -13,21 +13,21 @@ export default function Navbar() {
         setOpenAccount((account) => !account)
     }
 
-    return <div className="flex flex-row flex-wrap z-50 static items-center text-white font-customFont">
-        <div className="space-x-4 ml-4 my-2 sm:my-0">
+    return <div className="flex flex-row flex-wrap z-50 my-2 md:my-1 static items-center text-white font-customFont">
+        <div className="flex flex-row flex-wrap space-x-4 ml-4 my-2 sm:my-0">
             <a href="/" className="text-xs sm:text-sm">Home</a>
             <a href="/about" className="text-xs sm:text-sm">Leaderboards</a>
         </div>
 
-        <div className="ml-auto">
-            <div className="flex flex-col sm:my-2 mr-4 w-full">
-                {openAccount ? <>
+        <div className={openAccount ? "ml-auto w-fit" : "ml-auto w-[30%] sm:w-[20%]"}>
+            <div className="flex flex-col sm:my-2 pr-6 w-full">
+                {openAccount ?
                     <AcctOptionsDisplay HandleAccount={HandleAccount} />
-                </> :
-                    <>
+                    :
+                    <div className="flex flex-col w-full">
                         <NormalAcctDisplay HandleAccount={HandleAccount} />
                         <ProgressBar />
-                    </>
+                    </div>
                 }
             </div>
         </div>
@@ -85,7 +85,7 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
 function NormalAcctDisplay({ HandleAccount }: AcctDisplayProps) {
     const { currUser } = useUser()
 
-    return <div className="flex flex-row items-center space-x-1">
+    return <div className="flex flex-row w-full justify-end space-x-1">
         {(currUser && currUser.userName.length > 0) ? <p className="text-xs sm:text-sm">{currUser.userName}</p> : <p className="text-xs sm:text-sm"> not logged in</p >}
         <AccountCircle sx={{ width: '18px', height: '18px', cursor: 'pointer' }} onClick={HandleAccount} />
     </div>

@@ -8,7 +8,7 @@ export default {
     extend: {
       fontFamily: {
         customFont: ['lato'],
-        headerFont: ['ubuntu'],
+        headerFont: ['headerFont'],
         basicFont: ['basicText']
       }
     },
