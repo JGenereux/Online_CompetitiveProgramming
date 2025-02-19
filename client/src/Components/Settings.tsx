@@ -4,6 +4,7 @@ import { useUser } from './Contexts/userContext'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
+import { useToken } from './Contexts/tokenContext'
 
 export default function Settings() {
     return <div>
@@ -44,14 +45,25 @@ interface dashboardOptionProps {
 function DisplayDashboardOption({ status }: dashboardOptionProps) {
     const [questions, setQuestions] = useState<Question[]>([])
     const { currUser } = useUser()
+    const { GetToken } = useToken()
 
     useEffect(() => {
-        if (!currUser) return
-
         async function fetchQuestions() {
-            const res = await axios.post('http://localhost:5000/users/questions', { questionsSolved: currUser?.questionsSolved })
-            const { questionsData } = res.data
-            setQuestions(questionsData)
+            try {
+                const accessToken = await GetToken('accessToken')
+
+                if (!currUser || !accessToken) return
+
+                const res = await axios.post('http://localhost:5000/users/questions', { questionsSolved: currUser?.questionsSolved }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                })
+                const { questionsData } = res.data
+                setQuestions(questionsData)
+            } catch (error) {
+                console.log(error)
+            }
         }
         fetchQuestions()
     }, [currUser])
@@ -83,12 +95,19 @@ function AccountPage({ questions }: AccountPageProps) {
 function Account() {
     const [deleteSelected, setDeleteSelected] = useState(false)
     const { currUser, logoutUser } = useUser()
+    const { accessToken } = useToken()
 
     const navigate = useNavigate()
 
     const deleteAccount = async () => {
+        if (!accessToken || !currUser) return
+
         try {
-            const res = await axios.delete(`http://localhost:5000/users/delete/${currUser?.userEmail}`)
+            const res = await axios.delete(`http://localhost:5000/users/delete/${currUser?.userEmail}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
 
             if (res.status === 200) {
                 logoutUser()

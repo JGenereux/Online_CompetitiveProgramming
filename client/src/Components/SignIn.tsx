@@ -14,6 +14,7 @@ import { useUser } from "./Contexts/userContext.tsx"
 import { useGoogleLogin } from "@react-oauth/google"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useToken } from './Contexts/tokenContext.tsx';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -64,17 +65,10 @@ type CodeResponse = {
     token_type: string;
 };
 
-interface User {
-    userEmail: string;
-    userName: string;
-    questionsSolved: string[];
-    experience: number;
-    level: number;
-}
-
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [user, setUser] = useState<CodeResponse | null>(null);
     const { loginUser } = useUser()
+    const { SetToken } = useToken()
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -85,8 +79,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 const res = await axios.post(`http://localhost:5000/users/login`, {
                     accessToken: user.access_token,
                 });
-                const { userEmail, userName, questionsSolved, experience, level } = res.data;
-                const userAccount: User = { userEmail, userName, questionsSolved, experience, level }
+
+                const userAccount = res.data.user
+                const { accessToken, refreshToken } = res.data;
+                SetToken('accessToken', accessToken)
+                SetToken('refreshToken', refreshToken)
+
                 loginUser(userAccount)
                 navigate('/', { replace: true })
             } catch (error) {

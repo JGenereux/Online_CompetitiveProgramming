@@ -3,6 +3,8 @@ import ProgressBar from "./ProgressBar"
 import { useState } from "react"
 import { useUser } from "./Contexts/userContext"
 import { Link } from "react-router-dom"
+import axios from "axios"
+import { useToken } from "./Contexts/tokenContext"
 
 export default function Navbar() {
     const [openAccount, setOpenAccount] = useState(false)
@@ -38,10 +40,28 @@ interface AcctDisplayProps {
 
 function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
     const { currUser, logoutUser } = useUser()
+    const { GetToken, RemoveToken } = useToken()
 
-    const HandleLogout = () => {
-        HandleAccount();
-        logoutUser();
+    const HandleLogout = async () => {
+        try {
+            const accessToken = await GetToken('accessToken')
+            const refreshToken = await GetToken('refreshToken')
+
+            if (!accessToken || !refreshToken) return
+
+            await axios.delete(`http://localhost:5000/users/logout/${currUser?.userEmail}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-refresh-token": refreshToken
+                }
+            })
+            HandleAccount()
+            RemoveToken('accessToken')
+            RemoveToken('refreshToken')
+            logoutUser()
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (

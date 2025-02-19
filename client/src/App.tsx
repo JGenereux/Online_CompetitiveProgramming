@@ -9,34 +9,37 @@ import SignupForm from "./Components/SignUpForm"
 import PrivateLobby from "./Components/PrivateLobby"
 import { ProtectedRoute } from "./Components/Contexts/ProtectedRoutes"
 import { QuestionProvider } from "./Components/Contexts/questionContext"
+import { TokenProvider } from "./Components/Contexts/tokenContext"
 import Settings from "./Components/Settings"
 
 function App() {
   return (
-    <UserProvider>
-      <QuestionProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignupForm />} />
-            <Route path="/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
-            <Route
-              path="/lobby"
-              element={
-                <ProtectedRoute>
-                  <Lobby isPublic={true} />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/lobby/:id" element={<ProtectedRoute> <Match /> </ProtectedRoute>} />
-            <Route path="/privateLobby" element={<ProtectedRoute> <PrivateLobby /> </ProtectedRoute>} />
-            <Route path="/privateLobby/:id" element={<ProtectedRoute> <Lobby isPublic={false} /> </ProtectedRoute>} />
-            <Route path="/result/:id" element={<ProtectedRoute> <Result /> </ProtectedRoute>} />
-          </Routes>
-        </BrowserRouter >
-      </QuestionProvider>
-    </UserProvider>
+    <TokenProvider>
+      <UserProvider>
+        <QuestionProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignupForm />} />
+              <Route path="/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
+              <Route
+                path="/lobby"
+                element={
+                  <ProtectedRoute>
+                    <Lobby isPublic={true} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/lobby/:id" element={<ProtectedRoute> <Match /> </ProtectedRoute>} />
+              <Route path="/privateLobby" element={<ProtectedRoute> <PrivateLobby /> </ProtectedRoute>} />
+              <Route path="/privateLobby/:id" element={<ProtectedRoute> <Lobby isPublic={false} /> </ProtectedRoute>} />
+              <Route path="/result/:id" element={<ProtectedRoute> <Result /> </ProtectedRoute>} />
+            </Routes>
+          </BrowserRouter >
+        </QuestionProvider>
+      </UserProvider>
+    </TokenProvider>
   )
 }
 

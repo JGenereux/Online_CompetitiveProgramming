@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useUser } from '../Contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useToken } from '../Contexts/tokenContext';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -67,20 +68,13 @@ type CodeResponse = {
   token_type: string;
 };
 
-interface User {
-  userEmail: string;
-  userName: string;
-  questionsSolved: string[];
-  experience: number;
-  level: number;
-}
-
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [user, setUser] = useState<CodeResponse | null>(null);
   const [username, setUsername] = useState<string>('');
 
   const { loginUser } = useUser()
+  const { SetToken } = useToken()
 
   const navigate = useNavigate();
 
@@ -92,14 +86,29 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     const createAccount = async () => {
       if (!user) return;
 
+      //check if userName is larger than 16 characters && make sure it doesnt exist
+      if (username.length > 15) {
+        window.alert('Username must be less than 16 characters!')
+        return
+      }
+
       try {
+
         const res = await axios.post(`http://localhost:5000/users/createAccount`, {
           accessToken: user.access_token,
           userName: username
         });
 
-        const { userEmail, userName, questionsSolved, experience, level } = res.data;
-        const userAccount: User = { userEmail, userName, questionsSolved, experience, level }
+        if (res.status == 203) {
+          window.alert('Username already exists or you have signed up with this email already')
+          return
+        }
+
+        const userAccount = res.data.user
+        const { accessToken, refreshToken } = res.data;
+        SetToken('accessToken', accessToken)
+        SetToken('refreshToken', refreshToken)
+
         loginUser(userAccount)
         navigate('/', { replace: true })
       } catch (error) {

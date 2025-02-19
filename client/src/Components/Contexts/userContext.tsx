@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import axios from "axios";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { useToken } from "./tokenContext";
 
 interface User {
   userEmail: string;
@@ -49,6 +50,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     return storedUser ? JSON.parse(storedUser) : defaultUser;
   });
 
+  const { GetToken } = useToken()
+
   useEffect(() => {
     if (currUser.userEmail) {
       sessionStorage.setItem('user', JSON.stringify(currUser));
@@ -62,10 +65,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }
 
   const updateUser = async () => {
-    if (!currUser) return;
+    const accessToken = await GetToken('accessToken')
+
+    if (!currUser || !accessToken) return;
 
     try {
-      const res = await axios.get(`http://localhost:5000/users/retrieveUser?email=${currUser.userEmail}`)
+      const res = await axios.get(`http://localhost:5000/users/retrieveUser?email=${currUser.userEmail}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
       console.log(res);
       const { experience, level, userEmail, userName, questionsSolved } = res.data;
       setUser({
