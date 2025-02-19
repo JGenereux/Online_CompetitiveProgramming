@@ -27,7 +27,7 @@ class C extends Language {
         return `vector<int> A = {${input.slice(1, -1)}}`
     }
 
-    BuildTestCalls(functionCall, testCase, questionName) {
+    BuildTestCall(functionCall, testCase, inPlace) {
       
         const currFuncCall = functionCall;
         const n = currFuncCall.length;
@@ -72,7 +72,7 @@ class C extends Language {
         return {call: finalCall, expectedRes: testCase['expectedResult'], type: type};  
     }
     
-    GetTest(funcCall, testCase, datatype) {
+    GetTest(funcCall, testCase, origCase, datatype, inPlace) {
         let newFuncCall = "";
         let j = 0; //counter to denote what param we are currently on 
         

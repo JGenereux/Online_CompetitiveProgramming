@@ -4,6 +4,7 @@
 "hints": [null],
 "title": "Best Time to Buy and Sell Stock",
 "topicTags": ["Array","Dynamic Programming"],
+"in-place": false,
 "testCases": [
 {
 "expectedResult": "5",

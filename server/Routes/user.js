@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const { default: axios } = require('axios')
 const User = require('../Models/users')
+const fs = require('fs').promises;
 
 router.route('/').get(async (req, res) => {
     return res.json('User API is running')
@@ -98,6 +99,39 @@ router.route('/retrieveUser').get(async (req,res) => {
     }
 })
 
+router.route('/questions').post(async (req, res) => {
+    const { questionsSolved } = req.body;
+
+    try {
+        const questions = await Promise.all(
+            questionsSolved.map(async (question) => {
+                const questionFileName = question.toLowerCase().split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                try {
+                    const data = await fs.readFile(`./Questions/${questionFileName}.txt`, 'utf8');
+                    const { difficulty, topicTags } = JSON.parse(data); 
+
+                    return {
+                        name: questionFileName,
+                        difficulty,
+                        topicTags,
+                    };
+                } catch (err) {
+                    console.error(`Error reading file for ${questionFileName}:`, err);
+                    return null; // Skip errored files
+                }
+            })
+        );
+
+        // Filter out any failed reads (null values)
+        return res.status(200).json({ questionsData: questions.filter(q => q !== null) });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 router.route('/updateUser').post(async (req, res) => {
     const {email, questionSolved} = req.body;
 
@@ -114,6 +148,22 @@ router.route('/updateUser').post(async (req, res) => {
         return res.status(202).json("Successfully updated user")
     }catch(error) {
         console.log('Error updating user: ', error)
+    }
+})
+
+router.route('/delete/:email').delete(async (req, res) => {
+    const userEmail = req.params.email
+
+    try{
+        const user = await User.findOneAndDelete({userEmail: userEmail})
+
+        if(!user) {
+            return res.status(417).json("user doesn't exist")
+        }
+
+        return res.status(200).json("User successfully removed")
+    } catch(error) {
+        console.log(error)
     }
 })
 

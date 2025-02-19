@@ -4,6 +4,7 @@
 "hints": [null],
 "title": "Gas Station",
 "topicTags": ["Array","Greedy"],
+"in-place": false,
 "testCases": [
 {
 "expectedResult": "3",

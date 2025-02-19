@@ -1,14 +1,10 @@
 class Language {
-    /**
-     * Testcases are given as funcName(param1, ... , param) 
-     * so params need to be converted into variables specific to each language
-     */
-    GetTest() {
-    }
     
-    BuildTestCalls(functionCall, testCase, questionName) {}
+    GetTest(funcCall, testCase, origCase, datatype, inPlace) {}
+    
+    BuildTestCall(functionCall, testCase, inPlace) {}
 
-    IsOutputValid(codeOutput, expectedResult) {
+    IsOutputValid(codeOutput, expectedResult, inPlace) {
         let passed = true;
         const numericCodeResponse = codeOutput.replace(/\D/g, '');  // Remove non-numeric characters
         const numericExpectedOutput = expectedResult.replace(/\D/g, '');  // Remove non-numeric characters

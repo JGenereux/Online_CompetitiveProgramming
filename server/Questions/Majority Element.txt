@@ -4,6 +4,7 @@
 "hints": [null],
 "title": "Majority Element",
 "topicTags": ["Array","Hash Table","Divide and Conquer","Sorting","Counting"],
+"in-place": false,
 "testCases": [
 {
 "expectedResult": "3",

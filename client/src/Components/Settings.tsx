@@ -1,0 +1,212 @@
+import { AccountCircle } from '@mui/icons-material'
+import { ReactNode, useEffect, useState } from 'react'
+import { useUser } from './Contexts/userContext'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import Navbar from './Navbar'
+
+export default function Settings() {
+    return <div>
+        <Navbar />
+        <div className="flex h-96 md:h-72 my-1 justify-center">
+            <Dashboard />
+        </div>
+    </div>
+}
+
+function Dashboard() {
+    const [dashboardOption, setDashboardOption] = useState<string>("account")
+
+    const setOption = (option: string) => {
+        setDashboardOption(option)
+    }
+
+    return <div className="w-[80%] h-full border-white border-2">
+
+        <div className="flex flex-row h-full">
+            {/* div for side navigation bar */}
+            <div className="w-fit md:w-[18%] h-full border-r-2 border-white">
+                <SettingIcon type="account" setOption={setOption}> <AccountCircle /> </SettingIcon>
+                <SettingIcon type="solved" setOption={setOption}></SettingIcon>
+            </div>
+            {/* div for displaying specific settings page*/}
+            {dashboardOption && <DisplayDashboardOption status={dashboardOption} />}
+        </div>
+
+    </div>
+}
+
+
+interface dashboardOptionProps {
+    status: string
+}
+
+function DisplayDashboardOption({ status }: dashboardOptionProps) {
+    const [questions, setQuestions] = useState<Question[]>([])
+    const { currUser } = useUser()
+
+    useEffect(() => {
+        if (!currUser) return
+
+        async function fetchQuestions() {
+            const res = await axios.post('http://localhost:5000/users/questions', { questionsSolved: currUser?.questionsSolved })
+            const { questionsData } = res.data
+            setQuestions(questionsData)
+        }
+        fetchQuestions()
+    }, [currUser])
+
+    if (status === "account") {
+        return <AccountPage questions={questions} />
+    } else if (status === "solved") {
+        return <QuestionDashboard questions={questions} />
+    }
+}
+
+interface AccountPageProps {
+    questions: Question[];
+}
+
+function AccountPage({ questions }: AccountPageProps) {
+    return (
+        <div className="flex flex-col w-full h-full md:justify-center items-center md:space-y-8">
+            <div className="flex flex-col w-[80%] my-3 h-fit md:h-20 border-white border-2">
+                <Account />
+            </div>
+            {/* displays recent questions solved */}
+            <div className="flex flex-col w-full h-40 items-center">
+                <RecentQuestions questions={questions} />
+            </div>
+        </div>);
+}
+
+function Account() {
+    const [deleteSelected, setDeleteSelected] = useState(false)
+    const { currUser, logoutUser } = useUser()
+
+    const navigate = useNavigate()
+
+    const deleteAccount = async () => {
+        try {
+            const res = await axios.delete(`http://localhost:5000/users/delete/${currUser?.userEmail}`)
+
+            if (res.status === 200) {
+                logoutUser()
+                navigate('/', { replace: true })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    return <div className="flex flex-row flex-wrap text-xs ml-4 md:ml-6 my-auto text-white font-mono">
+        <div className="flex flex-col">
+            <div className="flex flex-col sm:flex-row flex-wrap sm:space-x-8">
+                <p>{currUser?.userName}</p>
+                <p>XP: {currUser?.experience}</p>
+                <p>Lvl: {currUser?.level}</p>
+            </div>
+            <AccountCircle sx={{ height: [48, 44, 44, 44, 44], width: [30, 42, 42, 42, 42] }} />
+        </div>
+        <div className="flex flex-col self-end ml-auto mr-4 text-[10px]">
+            <p className="self-end">{currUser?.userEmail}</p>
+            {deleteSelected ? <>
+                <button className="border-[1px] border-white rounded-[0.125rem] w-fit pr-1 pl-1 self-end" onClick={() => setDeleteSelected((select) => !select)}>Go Back</button>
+                <button className="border-[1px] border-white rounded-[0.125rem] w-fit pr-1 pl-1 self-end" onClick={deleteAccount}>Delete</button>
+            </> : <>
+                <button className="border-[1px] border-white rounded-[0.125rem] w-fit pr-1 pl-1 self-end mb-2 md:mb-0" onClick={() => setDeleteSelected((select) => !select)}>Delete Account</button>
+            </>}
+        </div>
+    </div>
+}
+
+function RecentQuestions({ questions }: AccountPageProps) {
+    const questionsHead = questions.slice(0, 4)
+    return <div className="flex flex-col w-[80%] h-full mb-2">
+        <p className="text-white font-mono">Recently solved</p>
+        <div className="h-6 w-full flex flex-row border-white border-2 border-b-0 text-center items-center text-white pl-2 text-xs md:text-sm">
+            <p className="border-white border-r-2 pr-1 md:pr-2 w-1/4 md:w-1/3">Name</p>
+            <p className="border-white border-r-2 pl-1 pr-1 md:pl-2 md:pr-2 w-2/4 md:w-1/3">Difficulty</p>
+            <p className="pl-1 pr-1 md:pl-2 md:pr-2 w-1/4 md:w-1/3">Topic</p>
+        </div>
+        <div className="flex flex-col w-full h-full border-white border-2 font-mono">
+            <div className="flex flex-col h-full">
+                {(questionsHead && questionsHead.length > 0) ? questionsHead.map(({ name, difficulty, topicTags }, index) => {
+                    return <Question question={{ name, difficulty, topicTags }} page="account" key={index} />
+                }) : <DisplayNoneSolved />}
+            </div>
+
+        </div>
+    </div>
+}
+
+interface QuestionProps {
+    question: Question,
+    page: string,
+}
+
+function Question({ question, page }: QuestionProps) {
+    //only show first 16 character of question name
+    const questionName = question.name.slice(0, 12).padEnd(12, '\u00A0')
+    const difficulty = question.difficulty.padEnd(7, '\u00A0')
+
+    return <div className={page === 'account' ? "flex flex-row flex-wrap h-2/4 smd:h-1/5 w-full border-white border-b-2 items-center"
+        : "flex flex-row flex-wrap h-fit md:h-1/6 w-full border-white border-b-2 items-center"}>
+        <div className="flex flex-col sm:flex-row ml-3 text-white text-[12px] sm:text-[14px]">
+            <p>{questionName}..</p>
+            <p className="md:ml-10">{difficulty}</p>
+            {question.topicTags?.length > 0 && <p className="md:ml-[85px]">{question.topicTags[0].slice(0, 9).padEnd(9, '\u00A0')}</p>}
+        </div>
+    </div>
+}
+
+interface SettingProps {
+    type: string,
+    setOption: (option: string) => void,
+    children?: ReactNode;
+}
+
+function SettingIcon({ type, setOption, children }: SettingProps) {
+    const capitilizedType = type.charAt(0).toUpperCase() + type.slice(1);
+
+    return <div className="flex flex-col h-1/4 w-full border-b-2 border-white text-white justify-center items-center text-sm md:text-md pl-2 pr-2 md:pl-0 md:pr-0">
+        {children}
+        <p onClick={() => setOption(type)}>{capitilizedType}</p>
+    </div>
+}
+
+
+interface Question {
+    name: string,
+    difficulty: string,
+    topicTags: string[],
+}
+
+interface QuestionDashProps {
+    questions: Question[]
+}
+function QuestionDashboard({ questions }: QuestionDashProps) {
+    const questionsHead = questions.slice(0, 6)
+
+    return <div className="flex flex-col w-full h-full justify-center items-center">
+        <h3 className="text-white font-mono text-sm">Recently solved</h3>
+        <div className="h-6 w-[80%] flex flex-row border-white border-2 border-b-0 text-center items-center text-white pl-2 text-sm">
+            <p className="border-white border-r-2  pr-1 md:pr-2 w-1/4 md:w-1/3">Name</p>
+            <p className="border-white border-r-2 pl-1 pr-1 md:pl-2 md:pr-2 w-2/4 md:w-1/3">Difficulty</p>
+            <p className="pl-1 pr-1 md:pl-2 md:pr-2 w-1/4 md:w-1/3">Topic</p>
+        </div>
+        <div className="flex flex-col w-[80%] h-[80%] border-white border-2">
+            {(questionsHead && questionsHead.length > 0) ? questionsHead.map(({ name, difficulty, topicTags }, index) => {
+                return <Question question={{ name, difficulty, topicTags }} page="solved" key={index} />
+            }) : <DisplayNoneSolved />}
+        </div>
+    </div>
+}
+
+function DisplayNoneSolved() {
+    return <div className="flex flex-row flex-wrap h-fit md:h-1/6 w-full border-white border-b-2 items-center">
+        <div className="flex flex-row flex-wrap text-white mx-auto text-xs font-mono">
+            <p>No questions solved</p>
+        </div>
+    </div>
+}

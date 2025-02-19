@@ -34,8 +34,8 @@ export default function Match() {
     const { currUser, updateUser } = useUser()
 
     const [questionPassed, setQuestionPassed] = useState<boolean>(false);
-    const [currLanguage, setCurrLanguage] = useState<string>('javascript')
-    const [currLanguageVersion, setCurrLanguageVersion] = useState<string>("18.15.0")
+    const [currLanguage, setCurrLanguage] = useState<string>('python')
+    const [currLanguageVersion, setCurrLanguageVersion] = useState<string>("3.10.0")
     const [codeResponse, setCodeResponse] = useState<string[]>([])
     const [testCases, setTestCases] = useState<testCase[]>([])
     const [expectedOutputs, setExpectedOutputs] = useState<string[]>([]);
@@ -59,16 +59,16 @@ export default function Match() {
         socket.on('playerDisconnected', ({ disconnected }) => {
             if (disconnected) {
                 window.alert('One of the users left. The game is now ending!')
+                resetQuestion()
                 navigate('/', { replace: true })
-                resetQuestion();
             }
         })
 
         socket.on('matchExpired', ({ disconnected, message }) => {
             if (disconnected) {
                 window.alert(message)
+                resetQuestion()
                 navigate('/', { replace: true })
-                resetQuestion();
             }
         })
 
@@ -77,8 +77,8 @@ export default function Match() {
         socket.on('gameResult', ({ result, message }) => {
             if (result) {
                 window.alert(message)
+                resetQuestion()
                 navigate(`/result/${id}`, { replace: true })
-                resetQuestion();
             }
         })
 
@@ -98,12 +98,15 @@ export default function Match() {
     //When the user switches their language ensure they get the appropriate function call
     //switched
     useEffect(() => {
+        if (!question || question.content.length == 0) return
         const updateCalls = async () => {
             try {
                 const res = await axios.post('http://localhost:5000/question/update', { currLanguage: currLanguage, question: question })
+                console.log(res.data)
                 setValue(res.data.functionCall)
             } catch (error) {
-                console.log(error)
+                //navigate('/', {replace: true})
+                console.log(` failed fetching new function call: ${error}`)
             }
         }
         updateCalls()
@@ -167,7 +170,7 @@ export default function Match() {
                     height="300px"
                     width="100%"
                     theme="vs-dark"
-                    defaultLanguage="javascript"
+                    defaultLanguage="python"
                     language={currLanguage}
                     defaultValue="// some comment"
                     options={{
@@ -219,7 +222,7 @@ interface OutputProps {
     numTestCases: number;
 }
 /**
- * Returns a div containing the output box for the user's code output
+ * Returns the output box for the user's code output
  * @param codeResponse string containing the output of the user's code
  * @returns 
  */

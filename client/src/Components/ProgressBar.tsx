@@ -26,7 +26,7 @@ export default function ProgressBar() {
 
     return (
         <div className="flex flex-row items-center">
-            <div className="flex flex-row border-y-blue-100 border-2 w-[70%] h-[0.8rem] rounded-md">
+            <div className="flex flex-row border-y-blue-100 border-2 w-[60%] h-[0.8rem] rounded-md">
                 <div
                     className="bg-neutral-400 rounded-md  text-center"
                     style={{ width: `${percentage}%` }}
@@ -35,7 +35,7 @@ export default function ProgressBar() {
                 </div>
             </div>
             <div className="ml-auto">
-                {currUser && <p className="text-xs">Lvl {currUser.level}</p>}
+                {currUser && <p className="text-xs mr-2">Lvl {currUser.level}</p>}
             </div>
         </div>
     )

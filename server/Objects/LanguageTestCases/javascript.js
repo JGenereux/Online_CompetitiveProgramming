@@ -28,7 +28,7 @@ function ConvertArray(array) {
 
 
 class Javascript extends Language {
-    BuildTestCalls(functionCall, testCase, questionName) {
+    BuildTestCall(functionCall, testCase, inPlace) {
       
         const currFuncCall = functionCall;
         const n = currFuncCall.length;
@@ -73,7 +73,7 @@ class Javascript extends Language {
         return {call: finalCall, expectedRes: testCase['expectedResult'], type: type};  
     }
     
-    GetTest(funcCall, testCase, datatype) {
+    GetTest(funcCall, testCase, origCase, datatype, inPlace) {
         let finalOutput = `${funcCall}\nconsole.log(${testCase})`
         return finalOutput;
     }

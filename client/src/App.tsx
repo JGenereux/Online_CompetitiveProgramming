@@ -9,6 +9,7 @@ import SignupForm from "./Components/SignUpForm"
 import PrivateLobby from "./Components/PrivateLobby"
 import { ProtectedRoute } from "./Components/Contexts/ProtectedRoutes"
 import { QuestionProvider } from "./Components/Contexts/questionContext"
+import Settings from "./Components/Settings"
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignupForm />} />
+            <Route path="/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
             <Route
               path="/lobby"
               element={

@@ -19,7 +19,7 @@ export default function Home() {
 }
 
 function JoinMatch() {
-    return <div className="flex flex-row w-[50%] h-[75%] justify-center items-center space-x-6 text-white">
+    return <div className="flex flex-row w-[65%] md:w-[50%] h-fit justify-center items-center space-x-6 text-white">
         <div className="flex flex-col bg-[#1F1B24] space-y-1 w-[100%] h-full md:w-[40%] rounded-[4px] p-2 items-center text-center text-xs md:text-sm">
             <p className="font-basicFont">Play against anyone</p>
             <img src={earthIcon} className="w-[96%] md:w-[80%]"></img>

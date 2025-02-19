@@ -8,6 +8,8 @@ const questionNames = require('./Objects/questionNames')
 const ResultLobbies = require('./Objects/ResultLobbies')
 const User = require('./Models/users')
 const { levels } = require('./levels');
+const util = require('util')
+const readFile = util.promisify(fs.readFile);
 require('dotenv').config()
 
 
@@ -47,7 +49,7 @@ app.get('/question', async (req, res) => {
     let funcCall = "";
     questionFuncs.questions.map((question) => {
         if(questionName == question.name) {
-            funcCall = question.functionCalls['javascript'] //default lang is set to javascript
+            funcCall = question.functionCalls['python'] //default lang is set to python
             return;
         }
     })
@@ -80,7 +82,7 @@ const getQuestionExperience = (questionDifficulty) => {
 app.post('/question/update', async (req, res) => {
     const {currLanguage, question} = req.body;
 
-    const questionName = question.title.toLowerCase().replace(/ /g, '_');
+    const questionName = question.title.toLowerCase().replace(/-/g, '_');
     let funcCall = "";
     questionFuncs.questions.map((question) => {
         if(questionName == question.name) {
@@ -88,13 +90,28 @@ app.post('/question/update', async (req, res) => {
             return;
         }
     })
-
+   
     if(!funcCall) {
         return res.status(500).json('Error running tests no function call provided')
     }
 
     return res.status(200).json({functionCall: funcCall})
 })
+
+async function isInPlace(questionName) {
+    try {
+        const data = await readFile(`./Questions/${questionName}.txt`, 'utf-8');
+        if (data.length > 0) {
+            const inPlace = JSON.parse(data)["in-place"];
+            return inPlace; // Ensure boolean is returned
+        }
+        return false;
+    } catch (error) {
+        console.log(`Error fetching inPlace boolean: ${error}`);
+        return false;
+    }
+}
+
 
 const winners = [];
 app.post('/question/runTest', async (req, res) => {
@@ -113,8 +130,9 @@ app.post('/question/runTest', async (req, res) => {
         return res.status(500).json('Error running tests no function call provided')
     }
 
+    const inPlace = await isInPlace(question.title.replace(/-/g, ' '))
     try{
-        const testsPassed = await RunTests(question, funcCall, userCode, currLanguage, languageVersion);
+        const testsPassed = await RunTests(question, funcCall, userCode, currLanguage, languageVersion, inPlace);
     
         //check if all tests are passed
         let passed = testsPassed.every((result) => result.passed)
@@ -142,10 +160,17 @@ app.post('/question/runTest', async (req, res) => {
       
             //use lobbyID to retrieve current room name
             //emit to all sockets in the room that someone has won
-            lobbies.map((lobby) => {
+            lobbies.map(async (lobby) => {
                 if(lobby.lobbyID == lobbyID) {
                     const roomName = lobby.roomName
-    
+                    
+                    //update users questionsSolved array
+                    const questionTitle = (JSON.parse(lobby.lcQuestion))['title']
+                    if(questionTitle && !user.questionsSolved.includes(questionTitle)) {
+                        user.questionsSolved = [...user.questionsSolved, questionTitle]
+                        await user.save() 
+                    }
+
                     const playerAdded = winners.find((winner) => winner.userName == userName)
                     if(!playerAdded) {
                         const resultRoomName = 'result' + String(lobby.lobbyID)
