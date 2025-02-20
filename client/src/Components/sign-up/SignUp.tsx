@@ -211,7 +211,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
             <Typography variant="body2" sx={{ textAlign: 'center', fontSize: '0.875rem', my: '0.7rem' }}> {/* Reduced text size */}
               Already have an account?{' '}
               <Link
-                href="/login"
+                onClick={() => navigate('/login')}
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
