@@ -99,6 +99,7 @@ export default function Match() {
             socket.off('playerDisconnected')
             socket.off('matchExpired')
             socket.off('gameResult')
+            socket.disconnect()
         }
     }, [])
 
