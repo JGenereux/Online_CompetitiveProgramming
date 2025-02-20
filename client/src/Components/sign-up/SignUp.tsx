@@ -15,7 +15,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
 import { useUser } from '../Contexts/userContext';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useToken } from '../Contexts/tokenContext';
 
 // Reduced padding in the card
@@ -80,6 +80,7 @@ type CodeResponse = {
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [user, setUser] = useState<CodeResponse | null>(null);
   const [username, setUsername] = useState<string>('');
+  const [error, setError] = useState<string>("")
 
   const { loginUser } = useUser()
   const { SetToken } = useToken()
@@ -105,11 +106,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           userName: username
         });
 
-        if (res.status == 203) {
-          window.alert('Username already exists or you have signed up with this email already')
-          return
-        }
-
         const userAccount = res.data.user
         const { accessToken, refreshToken } = res.data;
         SetToken('accessToken', accessToken)
@@ -118,18 +114,42 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
         loginUser(userAccount)
         navigate('/', { replace: true })
       } catch (error) {
-        console.log(error)
+        if (error instanceof AxiosError && error.response) {
+          const errorResponse = error.response.data
+          setError(errorResponse)
+        } else {
+          setError("Network error. Please try again")
+        }
       }
     }
     createAccount()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
+  const handleInput = (value: string) => {
+    if (error.length > 0) {
+      setError("")
+    }
+    setUsername(value)
+  }
+
   const login = useGoogleLogin({
     onSuccess: (codeResponse: CodeResponse) => setUser(codeResponse),
     onError: (error) => console.log('Login failed: ', error),
     scope: 'email profile'
   });
+
+  const handleSignUp = () => {
+    if (!username || username.length == 0) {
+      setError("Must enter a username")
+      return
+    }
+    if (error.length > 0) {
+      setError("")
+    }
+    login()
+
+  }
 
   return (
     <AppTheme {...props}>
@@ -156,7 +176,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }} // Reduced gap
+            sx={{ display: 'flex', flexDirection: 'column' }} // Reduced gap
           >
             <FormControl size="small"> {/* Added size small */}
               <FormLabel htmlFor="name">Username</FormLabel>
@@ -169,24 +189,26 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 placeholder="Jon Snow"
                 color={'primary'}
                 size="small" // Added size small
-                margin="dense" // Reduced margin
-                onChange={(e) => setUsername(String(e.target.value))}
+                onChange={(e) => handleInput(String(e.target.value))}
               />
             </FormControl>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}> {/* Reduced gap */}
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}> {/* Reduced gap */}
+            {error.length > 0 && <Typography sx={{ mb: '2px', ml: '6px', fontFamily: 'basicText', color: '#fc1103', fontSize: '12px' }}>
+              {error}
+            </Typography>}
             <Button
               fullWidth
               variant="outlined"
-              onClick={() => login()}
+              onClick={() => handleSignUp()}
               startIcon={<GoogleIcon />}
               size="small" // Added size small
               sx={{ py: { xs: 0.75, sm: 1 } }} // Reduced padding
             >
               Sign up with Google
             </Button>
-            <Typography variant="body2" sx={{ textAlign: 'center', fontSize: '0.875rem' }}> {/* Reduced text size */}
+            <Typography variant="body2" sx={{ textAlign: 'center', fontSize: '0.875rem', my: '0.7rem' }}> {/* Reduced text size */}
               Already have an account?{' '}
               <Link
                 href="/login"

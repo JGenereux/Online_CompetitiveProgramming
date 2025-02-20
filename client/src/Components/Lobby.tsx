@@ -52,14 +52,14 @@ function WaitingLobby({ isPublic }: LobbyProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center my-4 text-white">
-            <div className="flex flex-row font-basicFont text-xl">
+        <div className="flex flex-col items-center font-basicFont justify-center my-4 text-white">
+            <div className="flex flex-row  text-xl">
                 <h3>Players: </h3>
                 <h3>{playerCount}/2</h3>
             </div>
-            {!isPublic && <div className="flex flex-row">
+            {!isPublic && <div className="flex flex-row text-lg">
                 <p>Invite friends</p>
-                <img src={copyIcon} className="h-6" onClick={copyLink}></img>
+                <img src={copyIcon} className="h-8 cursor-pointer" onClick={copyLink}></img>
             </div>}
         </div >
     );

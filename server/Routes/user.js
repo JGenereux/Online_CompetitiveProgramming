@@ -30,7 +30,7 @@ router.route('/login').post(async (req,res) => {
     //Get user's email
     const {accessToken} = req.body;
     if(!accessToken) {
-        return res.status(404).json('Access token not provided');
+        return res.status(400).json('Access token not provided');
     }
 
     //use accessToken from oauth to retrieve user's email
@@ -64,6 +64,7 @@ router.route('/login').post(async (req,res) => {
         return res.status(200).json({user: user, accessToken: accessToken, refreshToken: refreshToken})
     } catch(error) {
         console.log('Error logging user info: ', error)
+        return res.status(500).json('Internal Server Error');
     }
 })
 
@@ -91,7 +92,7 @@ router.route('/createAccount').post(async(req,res) => {
     const {accessToken, userName} = req.body;
     
     if(!accessToken) {
-        return res.status(404).json('Access token not provided');
+        return res.status(400).json('Access token not provided');
     }
 
     //use accessToken from oauth to retrieve user's email
@@ -112,11 +113,11 @@ router.route('/createAccount').post(async(req,res) => {
         const userByUsername = await User.findOne({ userName: userName });
         //if user doesn't exist let client know user already has an account
         if (userByEmail) {
-            return res.status(203).json("User with this email already exists.");
+            return res.status(409).json("User with this email already exists.");
         }
         
         if (userByUsername) {
-            return res.status(203).json("Username is already taken.");
+            return res.status(409).json("Username is already taken.");
         }   
 
         const newUser = new User(newUserDefault)
@@ -142,6 +143,7 @@ router.route('/createAccount').post(async(req,res) => {
         return res.status(200).json({user: newUser, accessToken: jwtAccessToken, refreshToken: refreshToken})
     } catch(error) {
         console.log(error)
+        return res.status(500).json("Internal server error. Please try again")
     }
 })
 

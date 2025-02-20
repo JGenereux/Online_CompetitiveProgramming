@@ -16,14 +16,13 @@ export default function PrivateLobby() {
 
     const createLobby = () => {
         socket.emit('createPrivate')
-        //emit to createPrivate event which will return the lobbyID
     }
     return <div>
         <Navbar />
-        <div className="flex flex-row justify-center items-center text-white space-x-4">
-            <div className="flex flex-col bg-[#1F1B24] rounded-[4px] p-2 items-center space-y-1 w-1/2">
+        <div className="flex flex-row justify-center items-center space-x-4 text-black">
+            <div className="flex flex-col bg-[#F0FFF0] border-[#666565] border-[1px] shadow-[#666565] shadow-sm rounded-[4px] p-2 items-center space-y-1 w-1/2">
                 <p className="text-[12px] font-basicFont">To create a match click the button below to be sent to a private lobby. You can then invite friends from there</p>
-                <Button sx={{ color: 'white', padding: '10px' }} onClick={createLobby}>Create Lobby</Button>
+                <Button sx={{ color: 'black', padding: '10px' }} onClick={createLobby}>Create Lobby</Button>
             </div>
         </div>
     </div>

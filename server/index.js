@@ -12,7 +12,6 @@ const util = require('util')
 const readFile = util.promisify(fs.readFile);
 require('dotenv').config()
 
-
 const questionFuncs = require('./Routes/questionFuncs');
 const { randomUUID } = require('crypto');
 const { default: axios } = require('axios');
@@ -220,7 +219,6 @@ const fetchQuestion = async () => {
 const roomData = {};
 const lobbies = [];
 const sockets = new Set();
-const roomSocketInfo = [];
 const roomsBeingCreated = new Set();
 const resultRooms = new ResultLobbies()
 const roomSockets = new Set()
@@ -253,18 +251,8 @@ io.on('connect', (socket) => {
                 lobbyID = randomUUID();
                 roomName = "lobby" + String(lobbyID);
             }
-            //if there is no data for the currentRoom create it.
-            //else add the socket's id to the room
-            const existingRoom = roomSocketInfo.find((room) => room.roomName === roomName);
-            if(!existingRoom) {
-                roomSocketInfo.push({
-                    roomName: roomName,
-                    players: [socket.id]
-                })
-            } else {
-                existingRoom.players.push(socket.id)
-            }
             
+            socket.roomName = roomName // store roomName as property of socket to use if player disconnects from match
             socket.join(roomName)
             playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
         
@@ -333,6 +321,7 @@ io.on('connect', (socket) => {
             await resultRooms.addUser(lobbyID, currUser)
             
             if(roomSize == 2) {
+                // find winner of current room
                 const winner = winners.find((winner) => {
                     return winner.roomName == roomName
                 })
@@ -360,15 +349,13 @@ io.on('connect', (socket) => {
         })
 
         socket.on('disconnect', () => {
-            let roomName = ""
-            roomSocketInfo.forEach((room, index) => {
-                if (room.players.includes(socket.id)) {
-                    roomName = room.roomName;
-                    roomSocketInfo.splice(index, 1);  // Remove the room from the array
-                    io.to(roomName).emit('playerDisconnected', {disconnected: true})
-                }
-            });
-
+            if(!socket.roomName || socket.roomName.length == 0) return
+            
+            let roomName = socket.roomName
+            if(roomName) {
+                io.to(roomName).emit('playerDisconnected', {disconnected: true})
+            }
+            
             lobbies.forEach((lobby, index) => {
                 if(lobby.roomName == roomName) {
                     lobbies.splice(index, 1)

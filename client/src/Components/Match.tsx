@@ -41,6 +41,8 @@ export default function Match() {
     const [testCases, setTestCases] = useState<testCase[]>([])
     const [expectedOutputs, setExpectedOutputs] = useState<string[]>([]);
 
+    const [disconnected, setDisconnected] = useState<boolean>(false)
+
     const navigate = useNavigate();
     const params = useParams();
 
@@ -65,9 +67,9 @@ export default function Match() {
             }
         })
 
-        socket.on('matchExpired', ({ disconnected, message }) => {
+        socket.on('matchExpired', ({ disconnected }) => {
             if (disconnected) {
-                window.alert(message)
+                window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
                 navigate('/', { replace: true })
             }
@@ -161,6 +163,10 @@ export default function Match() {
 
     return <div className="flex flex-col">
         <Navbar />
+        {/* If a player has left the match show the player */}
+        {disconnected && <div>
+            <p>Other player left, sending you back to home</p>
+        </div>}
         <div className="flex flex-row my-2 md:my-0">
             <Question question={question} />
             <div className="flex flex-col space-y-5 w-[50%] ml-auto mr-2">
@@ -275,9 +281,9 @@ function Output({ expectedCases, codeResponse, testCases, numTestCases }: Output
                     {testCases[selectedCase - 1] ? <div>
                         <p className="pl-1 py-1 text-xs  text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
                         <p className="pl-1 py-1 text-xs  text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
-                        <p className="pl-1 py-1 text-xs  text-white">Your output: {codeResponse[selectedCase - 1].slice(0, 100)}</p>
+                        {codeResponse[selectedCase - 1] && <p className="pl-1 py-1 text-xs  text-white">Your output: {codeResponse[selectedCase - 1].slice(0, 100)}</p>}
                     </div> : <div>
-                        <p className="pl-1 py-1 text-xs  text-white">Expected Output: {expectedCases[selectedCase - 1].slice(0, 100)}</p>
+                        <p className="pl-1 py-1 text-xs  text-white">Expected Output: {expectedCases[selectedCase - 1]}</p>
                     </div>
                     }
                 </div>}

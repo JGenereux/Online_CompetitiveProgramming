@@ -11,7 +11,7 @@ import AppTheme from './shared-theme/AppTheme.tsx';
 import { useEffect, useState } from "react";
 import { useUser } from "./Contexts/userContext.tsx"
 import { useGoogleLogin } from "@react-oauth/google"
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useToken } from './Contexts/tokenContext.tsx';
 
@@ -77,6 +77,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const { loginUser } = useUser()
     const { SetToken } = useToken()
 
+    const [error, setError] = useState<string>("")
+
+
     const navigate = useNavigate();
     useEffect(() => {
         async function fetchUser() {
@@ -95,7 +98,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 loginUser(userAccount)
                 navigate('/', { replace: true })
             } catch (error) {
-                console.log(error)
+                if (error instanceof AxiosError && error.response) {
+                    const errorResponse = error.response.data
+                    setError(errorResponse)
+                } else {
+                    setError("Network error. Please try again")
+                }
             }
         }
         fetchUser()
@@ -107,6 +115,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         onError: (error) => console.log('Login failed: ', error),
         scope: 'email profile'
     });
+
+    const handleSignIn = () => {
+        if (error.length > 0) {
+            setError("")
+        }
+        login()
+
+    }
 
     return (
         <AppTheme {...props}>
@@ -130,13 +146,16 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                     >
                         Sign in
                     </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        {error.length > 0 && <Typography sx={{ mb: '2px', ml: '6px', fontFamily: 'basicText', color: '#fc1103', fontSize: '12px' }}>
+                            {error}
+                        </Typography>}
                         <Button
                             fullWidth
                             variant="outlined"
-                            onClick={() => login()}
+                            onClick={() => handleSignIn()}
                             startIcon={<GoogleIcon />}
-                            sx={{ py: { xs: 1, sm: 1.5 } }}
+                            sx={{ py: { xs: 1, sm: 1.5 }, mb: '1rem' }}
                         >
                             Sign in with Google
                         </Button>
