@@ -22,7 +22,7 @@ function OutputArray(arr) {
     return s;
 }
 
-class C extends Language {
+class Cpp extends Language {
     ConvertArray(array) {
         return `vector<int> A = {${input.slice(1, -1)}}`
     }
@@ -142,4 +142,4 @@ class C extends Language {
 }
 
 
-module.exports = C
+module.exports = Cpp
