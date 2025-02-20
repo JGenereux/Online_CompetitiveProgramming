@@ -203,7 +203,8 @@ const socketio = require('socket.io')
 const io = socketio(expressServer, {
     cors: [
         'http://localhost:3000',
-        'http://localhost:5000'
+        'http://localhost:5000',
+        'https://codeblitzxyz.vercel.app'
     ]
 })
 
