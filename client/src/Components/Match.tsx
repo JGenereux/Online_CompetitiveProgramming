@@ -62,6 +62,7 @@ export default function Match() {
 
         socket.on('playerDisconnected', ({ disconnected }) => {
             if (disconnected) {
+                console.log('nah')
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
                 navigate('/', { replace: true })
@@ -70,6 +71,7 @@ export default function Match() {
 
         socket.on('matchExpired', ({ disconnected }) => {
             if (disconnected) {
+                console.log('no')
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
                 navigate('/', { replace: true })
@@ -79,6 +81,7 @@ export default function Match() {
         //navigates the user to the result page to show user's that played
         //and their scores
         socket.on('gameResult', ({ result, message }) => {
+            console.log('yes')
             if (result) {
                 window.alert(message)
                 resetQuestion()
