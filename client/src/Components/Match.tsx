@@ -58,9 +58,6 @@ export default function Match() {
     }, [])
 
     useEffect(() => {
-        if (!socket.connected) {
-            socket.connect()
-        }
         const { id } = params;
 
         socket.on('playerDisconnected', ({ disconnected }) => {

@@ -3,10 +3,17 @@ import Navbar from "./Navbar"
 import earthIcon from '../assets/Images/earth.png'
 import lockIcon from '../assets/Images/secure-lock.png'
 import { useNavigate } from "react-router-dom"
+import { socket } from "../socket"
+import { useEffect } from "react"
 
 document.body.style.backgroundColor = "#121212"
 
 export default function Home() {
+    useEffect(() => {
+        if (!socket.connected) {
+            socket.connect()
+        }
+    }, [])
     return <div className="flex flex-col text-white">
         <Navbar></Navbar>
         <div className="flex flex-col ml-6 md:ml-12 w-[80%] h-fit space-y-[8px]">
