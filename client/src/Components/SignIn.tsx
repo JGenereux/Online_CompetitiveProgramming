@@ -8,7 +8,6 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { GoogleIcon } from './CustomIcons';
 import AppTheme from './shared-theme/AppTheme.tsx';
-import ColorModeSelect from './shared-theme/ColorModeSelect.tsx';
 import { useEffect, useState } from "react";
 import { useUser } from "./Contexts/userContext.tsx"
 import { useGoogleLogin } from "@react-oauth/google"
@@ -21,11 +20,12 @@ const Card = styled(MuiCard)(({ theme }) => ({
     flexDirection: 'column',
     alignSelf: 'center',
     width: '100%',
-    padding: theme.spacing(4),
+    padding: theme.spacing(3),
     gap: theme.spacing(2),
     margin: 'auto',
     [theme.breakpoints.up('sm')]: {
         maxWidth: '450px',
+        padding: theme.spacing(4),
     },
     boxShadow:
         'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
@@ -36,10 +36,17 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-    height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+    marginTop: '16px',
     minHeight: '100%',
-    padding: theme.spacing(2),
+    width: '100%',
+    padding: theme.spacing(1.5),
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     [theme.breakpoints.up('sm')]: {
+        padding: theme.spacing(3),
+    },
+    [theme.breakpoints.up('md')]: {
         padding: theme.spacing(4),
     },
     '&::before': {
@@ -104,14 +111,22 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     return (
         <AppTheme {...props}>
             <CssBaseline enableColorScheme />
-            <SignInContainer direction="column" justifySelf="center" justifyContent="space-between" width="50%">
-                <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+            <SignInContainer direction="column" justifyContent="space-between">
                 <Card variant="outlined">
                     {/*replace with logo <SitemarkIcon />*/}
                     <Typography
                         component="h1"
                         variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(1.25rem, 0vw, 0rem)' }}
+                        sx={{
+                            width: '100%',
+                            fontSize: {
+                                xs: '1.5rem',
+                                sm: '2rem'
+                            },
+                            textAlign: 'center',
+                            mb: 1,
+                            fontFamily: 'basicText'
+                        }}
                     >
                         Sign in
                     </Typography>
@@ -121,6 +136,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                             variant="outlined"
                             onClick={() => login()}
                             startIcon={<GoogleIcon />}
+                            sx={{ py: { xs: 1, sm: 1.5 } }}
                         >
                             Sign in with Google
                         </Button>

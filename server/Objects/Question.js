@@ -31,8 +31,14 @@ const RunTest = require("./LanguageTestCases/RunTests");
                         });
                         const codeOutput = res.data["run"]["output"];
                         
-                        const {passed, answerOutput} = newLang.language.IsOutputValid(codeOutput, call.expectedRes, inPlace)
-                        
+                        let {passed, answerOutput} = newLang.language.IsOutputValid(codeOutput, call.expectedRes, inPlace)
+                        if(!passed){
+                            answerOutput = formatError(functionCall, codeOutput)
+                            if(!answerOutput || answerOutput.length == 0) {
+                                answerOutput = "Tests failed"
+                            }
+                        }
+
                         const currentCase = {
                             expectedOutput: call.expectedRes,
                             userOutput: answerOutput,
@@ -51,6 +57,41 @@ const RunTest = require("./LanguageTestCases/RunTests");
         
         await Promise.all(RunCases);
         return cases;
+    }
+
+    function formatError(functionCall, errorOutput) {
+        const positions = [...errorOutput.matchAll(/line/g)].map(m => m.index);
+       
+        if(!positions || positions.length == 0) return ""
+        
+        let errors = ""
+        const len = errorOutput.length
+        let position = positions[0]
+        let i = 0
+        while(i < positions.length) {
+            //finalRes variable declared on backend will have issue if function has issues 
+            if(errorOutput.slice(position, position + 22).includes('in <module>')) {
+                position = positions[++i]
+                continue
+            }
+            
+            // brings position to be at the start of the error
+            while(position < errorOutput.length && errorOutput[position] != '\n') {
+                position++
+            }
+
+            let error = ""
+            while(position < errorOutput.length && (!errorOutput.slice(position, position + 16).includes('Error') || 
+                !errorOutput.slice(position, position + 3).includes('File'))){
+                error += errorOutput[position]
+                position++
+            }
+
+            errors += `${error}\n`
+            position = positions[i++]
+        }
+
+        return errors
     }
 
 module.exports = RunTests;

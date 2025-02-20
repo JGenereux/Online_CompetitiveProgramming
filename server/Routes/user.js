@@ -255,7 +255,6 @@ router.route('/token').post(async(req, res) => {
     if(refreshToken == null) return res.status(403)
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if(err) return res.status(403)
-            console.log('valid twin')
         const accessToken = generateAccessToken({email: email})
         res.status(200).json({accessToken: accessToken})
     })

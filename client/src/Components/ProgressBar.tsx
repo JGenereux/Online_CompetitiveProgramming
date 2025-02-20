@@ -35,7 +35,7 @@ export default function ProgressBar() {
                 </div>
             </div>
             <div className="">
-                {currUser && <p className="text-xs">Lvl {currUser.level}</p>}
+                {currUser && <p className="text-xs font-basicFont">Lvl {currUser.level}</p>}
             </div>
         </div>
     )

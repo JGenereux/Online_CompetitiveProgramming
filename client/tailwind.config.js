@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        customFont: ['lato'],
+        customFont: ['poppins'],
         headerFont: ['headerFont'],
         basicFont: ['basicText']
       }

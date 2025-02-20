@@ -1,3 +1,8 @@
+interface Question {
+    name: string,
+    difficulty: string,
+    topicTags: string[],
+}
 import { AccountCircle } from '@mui/icons-material'
 import { ReactNode, useEffect, useState } from 'react'
 import { useUser } from './Contexts/userContext'
@@ -22,11 +27,11 @@ function Dashboard() {
         setDashboardOption(option)
     }
 
-    return <div className="w-[80%] h-full border-white border-2">
+    return <div className="w-[80%] h-full bg-[#F0FFF0] border-[#666565] border-[1px] shadow-[#666565] shadow-sm">
 
         <div className="flex flex-row h-full">
             {/* div for side navigation bar */}
-            <div className="w-fit md:w-[18%] h-full border-r-2 border-white">
+            <div className="w-fit md:w-[18%] h-full border-r-2 border-black shadow-[#121212] shadow-md">
                 <SettingIcon type="account" setOption={setOption}> <AccountCircle /> </SettingIcon>
                 <SettingIcon type="solved" setOption={setOption}></SettingIcon>
             </div>
@@ -81,12 +86,13 @@ interface AccountPageProps {
 
 function AccountPage({ questions }: AccountPageProps) {
     return (
-        <div className="flex flex-col w-full h-full md:justify-center items-center md:space-y-8">
-            <div className="flex flex-col w-[80%] my-3 h-fit md:h-20 border-white border-2">
+        <div className="flex flex-col w-full h-full md:justify-center items-center">
+            <h3 className="self-start ml-3 my-1 font-headerFont text-lg">CodeBlitz Settings</h3>
+            <div className="flex flex-col w-[90%] h-fit md:h-20 border-black border-[1px] rounded-md">
                 <Account />
             </div>
             {/* displays recent questions solved */}
-            <div className="flex flex-col w-full h-40 items-center">
+            <div className="flex flex-col w-full h-40 items-center my-2">
                 <RecentQuestions questions={questions} />
             </div>
         </div>);
@@ -118,10 +124,10 @@ function Account() {
         }
     }
 
-    return <div className="flex flex-row flex-wrap text-xs ml-4 md:ml-6 my-auto text-white font-mono">
+    return <div className="flex flex-row flex-wrap text-xs ml-4 md:ml-6 my-auto font-customFont">
         <div className="flex flex-col">
             <div className="flex flex-col sm:flex-row flex-wrap sm:space-x-8">
-                <p>{currUser?.userName}</p>
+                <p>User: {currUser?.userName}</p>
                 <p>XP: {currUser?.experience}</p>
                 <p>Lvl: {currUser?.level}</p>
             </div>
@@ -130,10 +136,10 @@ function Account() {
         <div className="flex flex-col self-end ml-auto mr-4 text-[10px]">
             <p className="self-end">{currUser?.userEmail}</p>
             {deleteSelected ? <>
-                <button className="border-[1px] border-white rounded-[0.125rem] w-fit pr-1 pl-1 self-end" onClick={() => setDeleteSelected((select) => !select)}>Go Back</button>
-                <button className="border-[1px] border-white rounded-[0.125rem] w-fit pr-1 pl-1 self-end" onClick={deleteAccount}>Delete</button>
+                <button className="border-[1px] border-black rounded-[0.125rem] w-fit pr-1 pl-1 self-end" onClick={() => setDeleteSelected((select) => !select)}>Go Back</button>
+                <button className="border-[1px] border-black rounded-[0.125rem] w-fit pr-1 pl-1 self-end" onClick={deleteAccount}>Delete</button>
             </> : <>
-                <button className="border-[1px] border-white rounded-[0.125rem] w-fit pr-1 pl-1 self-end mb-2 md:mb-0" onClick={() => setDeleteSelected((select) => !select)}>Delete Account</button>
+                <button className="border-[1px] border-black rounded-[0.125rem] w-fit pr-1 pl-1 self-end mb-2 md:mb-0" onClick={() => setDeleteSelected((select) => !select)}>Delete Account</button>
             </>}
         </div>
     </div>
@@ -141,15 +147,15 @@ function Account() {
 
 function RecentQuestions({ questions }: AccountPageProps) {
     const questionsHead = questions.slice(0, 4)
-    return <div className="flex flex-col w-[80%] h-full mb-2">
-        <p className="text-white font-mono">Recently solved</p>
-        <div className="h-6 w-full flex flex-row border-white border-2 border-b-0 text-center items-center text-white pl-2 text-xs md:text-sm">
-            <p className="border-white border-r-2 pr-1 md:pr-2 w-1/4 md:w-1/3">Name</p>
-            <p className="border-white border-r-2 pl-1 pr-1 md:pl-2 md:pr-2 w-2/4 md:w-1/3">Difficulty</p>
+    return <div className="flex flex-col w-[90%] h-full mb-2">
+        <p className="font-headerFont text-lg">Recently solved</p>
+        <div className="h-6 w-full flex flex-row border-black border-[1px] rounded-tr-md rounded-tl-md border-b-0 text-center items-center  pl-2 text-xs md:text-sm font-customFont">
+            <p className="border-black border-r-[1px] pr-1 md:pr-2 w-1/4 md:w-1/3">Name</p>
+            <p className="border-black border-r-[1px] pl-1 pr-1 md:pl-2 md:pr-2 w-2/4 md:w-1/3">Difficulty</p>
             <p className="pl-1 pr-1 md:pl-2 md:pr-2 w-1/4 md:w-1/3">Topic</p>
         </div>
-        <div className="flex flex-col w-full h-full border-white border-2 font-mono">
-            <div className="flex flex-col h-full">
+        <div className="flex flex-col w-full h-full border-black border-[1px] rounded-bl-md rounded-br-md">
+            <div className="flex flex-col h-full w-full font-basicFont">
                 {(questionsHead && questionsHead.length > 0) ? questionsHead.map(({ name, difficulty, topicTags }, index) => {
                     return <Question question={{ name, difficulty, topicTags }} page="account" key={index} />
                 }) : <DisplayNoneSolved page="account" />}
@@ -169,9 +175,9 @@ function Question({ question, page }: QuestionProps) {
     const questionName = question.name.slice(0, 12).padEnd(12, '\u00A0')
     const difficulty = question.difficulty.padEnd(7, '\u00A0')
 
-    return <div className={page === 'account' ? "flex flex-row flex-wrap h-2/4 smd:h-1/5 w-full border-white border-b-2 items-center"
-        : "flex flex-row flex-wrap h-fit md:h-1/6 w-full border-white border-b-2 items-center"}>
-        <div className="flex flex-col sm:flex-row ml-3 text-white text-[12px] sm:text-[14px]">
+    return <div className={page === 'account' ? "flex flex-row flex-wrap h-2/4 md:h-1/4 w-full  items-center"
+        : "flex flex-row flex-wrap h-fit md:h-1/6 w-full  items-center"}>
+        <div className="flex flex-col sm:flex-row ml-3  text-[12px] sm:text-[14px]">
             <p>{questionName}..</p>
             <p className="md:ml-10">{difficulty}</p>
             {question.topicTags?.length > 0 && <p className="md:ml-[85px]">{question.topicTags[0].slice(0, 9).padEnd(9, '\u00A0')}</p>}
@@ -188,7 +194,7 @@ interface SettingProps {
 function SettingIcon({ type, setOption, children }: SettingProps) {
     const capitilizedType = type.charAt(0).toUpperCase() + type.slice(1);
 
-    return <div className="flex flex-col h-1/4 w-full border-b-2 border-white text-white justify-center items-center text-sm md:text-md pl-2 pr-2 md:pl-0 md:pr-0">
+    return <div className="flex flex-col h-1/5 cursor-pointer w-full border-b-2 border-black  justify-center items-center font-basicFont text-sm md:text-md pl-2 pr-2 md:pl-0 md:pr-0">
         {children}
         <p onClick={() => setOption(type)}>{capitilizedType}</p>
     </div>
@@ -208,18 +214,19 @@ function QuestionDashboard({ questions }: QuestionDashProps) {
     const questionsHead = questions.slice(0, 6)
 
     return <div className="flex flex-col w-full h-full justify-center items-center">
-        <h3 className="text-white font-mono text-sm">Recently solved</h3>
-        <div className="h-6 w-[80%] flex flex-row border-white border-2 border-b-0 text-center items-center text-white pl-2 text-sm">
-            <p className="border-white border-r-2  pr-1 md:pr-2 w-1/4 md:w-1/3">Name</p>
-            <p className="border-white border-r-2 pl-1 pr-1 md:pl-2 md:pr-2 w-2/4 md:w-1/3">Difficulty</p>
+        < h3 className="self-start ml-4 my-2 font-headerFont text-lg" > CodeBlitz Stats</h3 >
+
+        <div className="h-6 w-[90%] flex flex-row border-black border-[1px] border-b-0 rounded-tr-md rounded-tl-md text-center items-center text-sm font-customFont">
+            <p className="border-black border-r-[1px]  pr-1 md:pr-2 w-1/4 md:w-1/3">Name</p>
+            <p className="border-black border-r-[1px] pl-1 pr-1 md:pl-2 md:pr-2 w-2/4 md:w-1/3">Difficulty</p>
             <p className="pl-1 pr-1 md:pl-2 md:pr-2 w-1/4 md:w-1/3">Topic</p>
         </div>
-        <div className="flex flex-col w-[80%] h-[80%] border-white border-2">
+        <div className="flex flex-col w-[90%] h-[80%] border-black border-[1px] mb-4 font-basicFont rounded-bl-md rounded-br-md">
             {(questionsHead && questionsHead.length > 0) ? questionsHead.map(({ name, difficulty, topicTags }, index) => {
                 return <Question question={{ name, difficulty, topicTags }} page="solved" key={index} />
             }) : <DisplayNoneSolved page="solved" />}
         </div>
-    </div>
+    </div >
 }
 
 interface NoneSolvedProps {
@@ -227,8 +234,8 @@ interface NoneSolvedProps {
 }
 
 function DisplayNoneSolved({ page }: NoneSolvedProps) {
-    return <div className={page === "account" ? "flex flex-row flex-wrap h-fit md:h-1/4 w-full border-white border-b-2 items-center" : "flex flex-row flex-wrap h-fit md:h-1/6 w-full border-white border-b-2 items-center"}>
-        <div className="flex flex-row flex-wrap text-white mx-auto text-xs font-mono">
+    return <div className={page === "account" ? "flex flex-row flex-wrap h-fit md:h-1/4 w-full border-black border-b-[1px] items-center" : "flex flex-row flex-wrap h-fit md:h-1/6 w-full border-black border-b-[1px] items-center"}>
+        <div className="flex flex-row flex-wrap  mx-auto text-xs">
             <p>No questions solved</p>
         </div>
     </div>

@@ -3,15 +3,14 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'lato';
-    src: url('./assets/Fonts/Lato-Light.ttf')
-}
-
-@font-face {
     font-family: 'headerFont';
     src: url('./assets/Fonts/DarumadropOne-Regular.ttf')
 }
 
+@font-face {
+    font-family: 'poppins';
+    src: url('./assets/Fonts/Poppins-SemiBold.ttf')
+}
 
 @font-face {
     font-family: 'basicText';

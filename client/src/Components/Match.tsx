@@ -8,6 +8,7 @@ import { socket } from "../socket";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 import { useUser } from "./Contexts/userContext";
 import { UseQuestion } from "./Contexts/questionContext";
+import Navbar from "./Navbar";
 
 interface Test {
     expectedResult: string,
@@ -158,40 +159,43 @@ export default function Match() {
         }
     }
 
-    return <div className="flex flex-row my-5">
-        <Question question={question} />
-        <div className="flex flex-col space-y-5 w-[50%] ml-auto mr-2">
-            <div className="flex flex-col">
-                <div className="flex flex-row bg-[#1e1e1e] w-fit items-center">
-                    <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
-                    <Button sx={{ height: '26px', fontSize: '12px', color: 'white' }} onClick={RunCode}>Run</Button>
+    return <div className="flex flex-col">
+        <Navbar />
+        <div className="flex flex-row my-2 md:my-0">
+            <Question question={question} />
+            <div className="flex flex-col space-y-5 w-[50%] ml-auto mr-2">
+                <div className="flex flex-col">
+                    <div className="flex flex-row bg-[#1e1e1e] w-fit items-center">
+                        <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
+                        <Button sx={{ height: '26px', fontSize: '12px', color: 'white' }} onClick={RunCode}>Run</Button>
+                    </div>
+                    <Editor
+                        height="300px"
+                        width="100%"
+                        theme="vs-dark"
+                        defaultLanguage="python"
+                        language={currLanguage}
+                        defaultValue="// some comment"
+                        options={{
+                            minimap: { enabled: false }, // Disable minimap
+                            lineNumbers: "off", // Hide line numbers
+                            glyphMargin: true, // Remove glyph margin
+                            folding: false, // Remove folding controls
+                            lineDecorationsWidth: 0, // Reduce extra spacing
+                            lineNumbersMinChars: 0, // Minimize leftover space
+                            scrollbar: {
+                                vertical: "hidden",
+                                horizontal: "hidden",
+                            },
+                            fontSize: 12,
+                            lineHeight: 18,
+                        }}
+                        value={value}
+                        onChange={(value) => setValue(String(value))}
+                    />
                 </div>
-                <Editor
-                    height="300px"
-                    width="100%"
-                    theme="vs-dark"
-                    defaultLanguage="python"
-                    language={currLanguage}
-                    defaultValue="// some comment"
-                    options={{
-                        minimap: { enabled: false }, // Disable minimap
-                        lineNumbers: "off", // Hide line numbers
-                        glyphMargin: true, // Remove glyph margin
-                        folding: false, // Remove folding controls
-                        lineDecorationsWidth: 0, // Reduce extra spacing
-                        lineNumbersMinChars: 0, // Minimize leftover space
-                        scrollbar: {
-                            vertical: "hidden",
-                            horizontal: "hidden",
-                        },
-                        fontSize: 12,
-                        lineHeight: 18,
-                    }}
-                    value={value}
-                    onChange={(value) => setValue(String(value))}
-                />
+                <Output expectedCases={expectedOutputs} codeResponse={codeResponse} testCases={testCases} numTestCases={question.testCases.length}></Output>
             </div>
-            <Output expectedCases={expectedOutputs} codeResponse={codeResponse} testCases={testCases} numTestCases={question.testCases.length}></Output>
         </div>
     </div>
 }
@@ -205,15 +209,39 @@ interface QuestionProps {
 }
 
 function Question({ question }: QuestionProps) {
-    return <div className="w-[40%] md:w-[46%] ml-3 text-white bg-[#1e1e1e] pl-2 py-3 rounded-sm">
-        <h3 className="text-lg mb-2 font-headerFont">{question.title}</h3>
+    return <div className="w-[40%] md:w-[46%] ml-3 text-white bg-[#1e1e1e] pl-2 py-1 rounded-sm">
+        <div className="flex flex-row items-center mb-2 font-headerFont">
+            <h3 className="text-lg">{question.title}</h3>
+            <Difficulty difficulty={question.difficulty} />
+        </div>
         <div className="">
             {(question && question.content.length > 0) && <div className="flex flex-col space-y-2">
-                <p className="text-xs md:text-sm whitespace-pre-wrap font-basicFont">{question.content}</p>
+                <p className="text-xs md:text-sm whitespace-pre-wrap font-customFont">{question.content}</p>
             </div>}
         </div>
     </div>
 }
+
+interface DifficultyProps {
+    difficulty: string,
+}
+
+function Difficulty({ difficulty }: DifficultyProps) {
+    const textColor = difficulty === "Easy"
+        ? "text-green-500"
+        : difficulty === "Medium"
+            ? "text-yellow-500"
+            : "text-red-500";
+
+    return (
+        <div className={`ml-auto mr-8 text-sm px-3 py-0.5 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] shadow-sm transition-all duration-200 hover:bg-[#222222] hover:border-[#393939] ${textColor}`}>
+            {difficulty}
+        </div>
+    );
+}
+
+
+
 
 interface OutputProps {
     expectedCases: string[];
@@ -232,24 +260,24 @@ function Output({ expectedCases, codeResponse, testCases, numTestCases }: Output
     const tests = Array.from({ length: numTestCases != 0 ? numTestCases : 3 }, (_, i) => i + 1);
 
     return (
-        <div>
-            <div className="flex flex-row space-x-4">
+        <div className="bg-[#1e1e1e]">
+            <div className="flex flex-row space-x-4 border-[#666565] border-b-[1.5px]">
                 {tests.map((index) => {
                     return <div key={index} className="font-headerFont">
                         {(testCases && testCases[index - 1]) ?
-                            <h3 className={testCases[index - 1].passed == true ? `text-green-400 ml-1 text-sm` : `text-red-600 ml-1 text-xs md:text-sm`} onClick={() => setSelectedCase(index)}>Test Case {index}</h3>
-                            : <h3 className="text-white ml-1 text-xs md:text-sm" onClick={() => setSelectedCase(index)}>Test Case {index}</h3>}
+                            <h3 className={testCases[index - 1].passed == true ? `text-green-400 ml-1 cursor-pointer` : `text-red-600 ml-1 cursor-pointer`} onClick={() => setSelectedCase(index)}>Test Case {index}</h3>
+                            : <h3 className="text-white ml-1 cursor-pointer" onClick={() => setSelectedCase(index)}>Test Case {index}</h3>}
                     </div>
                 })}
             </div>
             <div className="bg-[#1e1e1e] w-full h-[100px] font-basicFont">
                 {(selectedCase != null && expectedCases) && <div>
                     {testCases[selectedCase - 1] ? <div>
-                        <p className="pl-1 py-1 text-xs md:text-sm text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
-                        <p className="pl-1 py-1 text-xs md:text-sm text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
-                        <p className="pl-1 py-1 text-xs md:text-sm text-white">Your output: {codeResponse[selectedCase - 1]}</p>
+                        <p className="pl-1 py-1 text-xs  text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
+                        <p className="pl-1 py-1 text-xs  text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
+                        <p className="pl-1 py-1 text-xs  text-white">Your output: {codeResponse[selectedCase - 1].slice(0, 100)}</p>
                     </div> : <div>
-                        <p className="pl-1 py-1 text-xs md:text-sm text-white">Expected Output: {expectedCases[selectedCase - 1]}</p>
+                        <p className="pl-1 py-1 text-xs  text-white">Expected Output: {expectedCases[selectedCase - 1].slice(0, 100)}</p>
                     </div>
                     }
                 </div>}

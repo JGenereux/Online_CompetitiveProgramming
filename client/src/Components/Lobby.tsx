@@ -52,8 +52,8 @@ function WaitingLobby({ isPublic }: LobbyProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center my-2 text-white">
-            <div className="flex flex-row">
+        <div className="flex flex-col items-center justify-center my-4 text-white">
+            <div className="flex flex-row font-basicFont text-xl">
                 <h3>Players: </h3>
                 <h3>{playerCount}/2</h3>
             </div>
