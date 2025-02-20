@@ -241,6 +241,7 @@ let roomName = "lobby" + String(lobbyID)
 io.on('connect', (socket) => {
     //Listener for creating a match
     socket.on('joinMatch', async () => {
+        console.log('socket connected')
         try{
             //check if the socket has already joined a match (cause of useEffect double-rendering on mount)
             if(sockets.has(socket.id)) return;
