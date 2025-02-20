@@ -64,6 +64,7 @@ export default function Match() {
             if (disconnected) {
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
+                socket.disconnect()
                 navigate('/', { replace: true })
             }
         })
@@ -72,6 +73,7 @@ export default function Match() {
             if (disconnected) {
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
+                socket.disconnect()
                 navigate('/', { replace: true })
             }
         })
@@ -82,6 +84,7 @@ export default function Match() {
             if (result) {
                 window.alert(message)
                 resetQuestion()
+                socket.disconnect()
                 navigate(`/result/${id}`, { replace: true })
             }
         })

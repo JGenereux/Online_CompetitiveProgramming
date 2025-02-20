@@ -49,6 +49,7 @@ export default function Result() {
 
         return () => {
             socket.off('notifyResult')
+            socket.disconnect()
         }
     }, [])
 
