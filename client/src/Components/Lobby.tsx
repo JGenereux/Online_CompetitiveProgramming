@@ -43,7 +43,7 @@ function WaitingLobby({ isPublic }: LobbyProps) {
     const copyLink = async () => {
         try {
             const { id } = params;
-            const link = `http://localhost:5173/privateLobby/${id}`
+            const link = `https://codeblitzxyz.vercel.app/lobby${id}`
             await navigator.clipboard.writeText(link);
             alert('link copied to clipboard')
         } catch (err) {
