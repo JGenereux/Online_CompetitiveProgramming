@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Editor } from "@monaco-editor/react"
 import { Button } from "@mui/material";
 import MenuBar from "./MenuBar";
 import { socket } from "../socket";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "./Contexts/userContext";
 import { UseQuestion } from "./Contexts/questionContext";
 import Navbar from "./Navbar";
