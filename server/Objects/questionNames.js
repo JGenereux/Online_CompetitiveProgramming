@@ -3,7 +3,7 @@ const questionNames = [
     "Merge Sorted Array",
     "Majority Element",
     "Rotate Array",
-    "Best time to buy and sell stock",
+    "Best Time To Buy And Sell Stock",
     "Gas Station",
 ]
 
