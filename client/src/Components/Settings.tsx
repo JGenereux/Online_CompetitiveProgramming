@@ -59,7 +59,7 @@ function DisplayDashboardOption({ status }: dashboardOptionProps) {
 
                 if (!currUser || !accessToken) return
 
-                const res = await axios.post('http://localhost:5000/users/questions', { questionsSolved: currUser?.questionsSolved }, {
+                const res = await axios.post('https://codeblitz.up.railway.app/users/questions', { questionsSolved: currUser?.questionsSolved }, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -109,7 +109,7 @@ function Account() {
         if (!accessToken || !currUser) return
 
         try {
-            const res = await axios.delete(`http://localhost:5000/users/delete/${currUser?.userEmail}`, {
+            const res = await axios.delete(`https://codeblitz.up.railway.app/users/delete/${currUser?.userEmail}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }

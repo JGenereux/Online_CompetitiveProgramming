@@ -86,7 +86,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             if (!user) return;
 
             try {
-                const res = await axios.post(`http://localhost:5000/users/login`, {
+                const res = await axios.post(`https://codeblitz.up.railway.app/users/login`, {
                     accessToken: user.access_token,
                 });
 

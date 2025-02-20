@@ -49,7 +49,7 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
 
             if (!accessToken || !refreshToken) return
 
-            await axios.delete(`http://localhost:5000/users/logout/${currUser?.userEmail}`, {
+            await axios.delete(`https://codeblitz.up.railway.app/users/logout/${currUser?.userEmail}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     "x-refresh-token": refreshToken

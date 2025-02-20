@@ -104,7 +104,7 @@ export default function Match() {
         if (!question || question.content.length == 0) return
         const updateCalls = async () => {
             try {
-                const res = await axios.post('http://localhost:5000/question/update', { currLanguage: currLanguage, question: question })
+                const res = await axios.post('https://codeblitz.up.railway.app/question/update', { currLanguage: currLanguage, question: question })
                 console.log(res.data)
                 setValue(res.data.functionCall)
             } catch (error) {
@@ -138,7 +138,7 @@ export default function Match() {
                 userName: currUser.userName,
                 question: question
             }
-            const res = await axios.post(`http://localhost:5000/question/runTest`, runTestInfo)
+            const res = await axios.post(`https://codeblitz.up.railway.app/question/runTest`, runTestInfo)
 
             const { testsPassed, passed } = res.data;
 
