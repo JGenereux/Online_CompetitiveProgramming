@@ -2,11 +2,12 @@ import { AccountCircle } from "@mui/icons-material"
 import ProgressBar from "./ProgressBar"
 import { useState } from "react"
 import { useUser } from "./Contexts/userContext"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useToken } from "./Contexts/tokenContext"
 
 export default function Navbar() {
+    const navigate = useNavigate()
     const [openAccount, setOpenAccount] = useState(false)
 
     const HandleAccount = () => {
@@ -15,8 +16,8 @@ export default function Navbar() {
 
     return <div className="flex flex-row flex-wrap z-50 my-2 md:my-0 static items-center text-white font-customFont">
         <div className="flex flex-row flex-wrap space-x-4 ml-4 my-2 sm:my-0 font-basicFont">
-            <a href="/" className="text-xs sm:text-sm">Home</a>
-            <a href="/about" className="text-xs sm:text-sm">Leaderboards</a>
+            <a onClick={() => navigate('/')} className="text-xs sm:text-sm">Home</a>
+            <a onClick={() => navigate('/about')} className="text-xs sm:text-sm">Leaderboards</a>
         </div>
 
         <div className={openAccount ? "ml-auto w-fit" : "ml-auto w-[45%] sm:w-[25%]"}>
@@ -39,6 +40,7 @@ interface AcctDisplayProps {
 }
 
 function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
+    const navigate = useNavigate();
     const { currUser, logoutUser } = useUser()
     const { GetToken, RemoveToken } = useToken()
 
@@ -76,7 +78,7 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
                         <Link to="/settings">Settings</Link>
                         <button onClick={HandleLogout}>Logout</button>
                     </div>
-                    : <a href="/login">Login</a>}
+                    : <a onClick={() => navigate('/login')}>Login</a>}
             </div>
         </div>
     )

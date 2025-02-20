@@ -162,7 +162,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                         <Typography sx={{ textAlign: 'center' }}>
                             Don&apos;t have an account?{' '}
                             <Link
-                                href="/signup"
+                                onClick={() => navigate("/signup")}
                                 variant="body2"
                                 sx={{ alignSelf: 'center' }}
                             >
