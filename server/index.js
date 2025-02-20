@@ -350,6 +350,7 @@ io.on('connect', (socket) => {
         })
 
         socket.on('disconnect', () => {
+            console.log('look at me disconnecting im so cool!')
             if(!socket.roomName || socket.roomName.length == 0) return
             
             let roomName = socket.roomName
