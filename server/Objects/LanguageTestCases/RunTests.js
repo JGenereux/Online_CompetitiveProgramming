@@ -1,4 +1,4 @@
-const { C } = require("./c++");
+const C = require('./c++')
 const Javascript = require("./javascript");
 const Language = require("./Language");
 const Python = require("./python");

@@ -142,4 +142,4 @@ class C extends Language {
 }
 
 
-module.exports = {C}
+module.exports = C
