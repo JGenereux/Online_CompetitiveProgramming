@@ -16,12 +16,12 @@ export default function Navbar() {
 
     return <div className="flex flex-row flex-wrap z-50 my-2 md:my-0 static items-center text-white font-customFont">
         <div className="flex flex-row flex-wrap space-x-4 sm:space-x-6 md:space-x-8 ml-4 my-2 sm:my-0 font-basicFont">
-            <a onClick={() => navigate('/')} className="text-xs sm:text-sm md:text-lg">Home</a>
-            <a onClick={() => navigate('/about')} className="text-xs sm:text-sm md:text-lg">Leaderboards</a>
+            <a onClick={() => navigate('/')} className="text-xs sm:text-sm md:text-lg cursor-pointer">Home</a>
+            <a onClick={() => navigate('/about')} className="text-xs sm:text-sm md:text-lg cursor-pointer">Leaderboards</a>
         </div>
 
         <div className={openAccount ? "ml-auto w-fit" : "ml-auto w-[45%] sm:w-[25%]"}>
-            <div className="flex flex-col sm:my-2 pr-6 w-full">
+            <div className="flex flex-col sm:my-2 pr-4 md:pr-6 w-full">
                 {openAccount ?
                     <AcctOptionsDisplay HandleAccount={HandleAccount} />
                     :
@@ -78,7 +78,7 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
                         <Link to="/settings">Settings</Link>
                         <button onClick={HandleLogout}>Logout</button>
                     </div>
-                    : <a onClick={() => navigate('/login')}>Login</a>}
+                    : <a onClick={() => navigate('/login')} className="cursor-pointer">Login</a>}
             </div>
         </div>
     )

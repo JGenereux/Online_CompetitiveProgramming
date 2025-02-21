@@ -26,7 +26,7 @@ export default function ProgressBar() {
 
     return (
         <div className="flex flex-row items-center w-full justify-end space-x-2">
-            <div className="flex flex-row border-y-blue-100 border-2 w-[60%] h-[0.8rem] rounded-md">
+            <div className="flex flex-row border-y-blue-100 border-2 w-[50%] md:w-[60%] lg:w-[40%] h-[0.8rem] rounded-md">
                 <div
                     className="bg-neutral-400 rounded-md  text-center"
                     style={{ width: `${percentage}%` }}
