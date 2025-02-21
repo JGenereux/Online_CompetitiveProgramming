@@ -51,9 +51,7 @@ class ResultLobbies {
     async getLobby(lobbyID) {
         const releaseLock = await this.#acquireLock(lobbyID)
         try{
-            const lobby = this.#lobbies[lobbyID] || null
-            await removeLobby(lobbyID)
-            return lobby
+            return this.#lobbies[lobbyID] || null
         } finally {
             releaseLock()
         }

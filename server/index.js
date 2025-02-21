@@ -324,8 +324,7 @@ io.on('connect', (socket) => {
             }
 
             await resultRooms.addUser(lobbyID, currUser)
-            console.log('Room size is: ', roomSize)
-            console.log('Winners so far:', winners)
+            
             if(roomSize == 2) {
                 // find winner of current room
                 const winner = winners.find((winner) => {
@@ -335,6 +334,7 @@ io.on('connect', (socket) => {
                 if(winner) {
                     //currentRoom is an array of players
                     const currentRoom = await resultRooms.getLobby(lobbyID)
+                    await resultRooms.removeLobby(lobbyID)
                     io.to(roomName).emit('notifyResult', {playersInRoom: currentRoom, winner: winner.userName, winnerCode: winner.userOutput})
                     
                     //remove room from winners array
