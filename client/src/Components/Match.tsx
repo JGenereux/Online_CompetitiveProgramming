@@ -84,7 +84,6 @@ export default function Match() {
         //and their scores
         socket.on('gameResult', ({ result, message }) => {
             if (result) {
-                window.alert(message)
                 resetQuestion()
                 navigate(`/result/${id}`, { replace: true })
             }
