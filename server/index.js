@@ -259,7 +259,7 @@ io.on('connect', (socket) => {
                 roomName = "lobby" + String(lobbyID);
             }
         
-            playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
+            const playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
             
             io.to(roomName).emit('roomUpdate', {roomName, playersInRoom})
 
