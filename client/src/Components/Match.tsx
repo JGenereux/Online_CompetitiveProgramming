@@ -31,6 +31,44 @@ interface testCase {
     passed: boolean
 }
 
+const MinimalAutoTimer = () => {
+    const [timeLeft, setTimeLeft] = useState(30 * 60);
+    const [isComplete, setIsComplete] = useState(false);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimeLeft(prevTime => {
+                if (prevTime <= 1) {
+                    clearInterval(interval);
+                    setIsComplete(true);
+                    return 0;
+                }
+                return prevTime - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const progressPercentage = 100 - ((timeLeft / (30 * 60)) * 100);
+
+    return (
+        <div className="ml-2 p-3 text-white rounded-md shadow-md w-fit h-12 md:h-14 lg:w-36">
+            <div className="text-2xl md:text-3xl font-mono text-center">{formattedTime}</div>
+
+            <div className="w-full bg-gray-200 rounded-full h-1">
+                <div
+                    className="bg-blue-600 h-1 rounded-full transition-all duration-1000 ease-linear"
+                    style={{ width: `${progressPercentage}%` }}
+                ></div>
+            </div>
+        </div>
+    );
+};
+
 export default function Match() {
     const { question, value, resetQuestion, setValue } = UseQuestion()
     const { currUser, updateUser } = useUser()
@@ -170,6 +208,7 @@ export default function Match() {
         {disconnected && <div>
             <p>Other player left, sending you back to home</p>
         </div>}
+        <MinimalAutoTimer />
         <div className="flex flex-row my-2 md:my-0">
             <Question question={question} />
             <div className="flex flex-col space-y-5 w-[50%] ml-auto mr-2">
