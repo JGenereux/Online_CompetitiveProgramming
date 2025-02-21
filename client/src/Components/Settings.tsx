@@ -10,8 +10,14 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
 import { useToken } from './Contexts/tokenContext'
+import { socket } from '../socket'
 
 export default function Settings() {
+    useEffect(() => {
+        if (socket.connected) {
+            socket.disconnect()
+        }
+    }, [])
     return <div>
         <Navbar />
         <div className="flex h-96 md:h-72 my-1 justify-center">

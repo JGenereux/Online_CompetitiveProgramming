@@ -81,8 +81,9 @@ const getQuestionExperience = (questionDifficulty) => {
 app.post('/question/update', async (req, res) => {
     const {currLanguage, question} = req.body;
 
-    const questionName = question.title.toLowerCase().replace(/-/g, '_');
+    const questionName = question.title.toLowerCase().replace(/ /g, '_');
     let funcCall = "";
+    
     questionFuncs.questions.map((question) => {
         if(questionName == question.name) {
             funcCall = question.functionCalls[`${currLanguage}`]
@@ -140,7 +141,7 @@ app.post('/question/runTest', async (req, res) => {
             testsPassed,
             passed
         };
-        console.log('passed?: ', passed)
+        
         //if all testcases are passed means game is now over.
         if(passed) {
             const rewardedExp = getQuestionExperience(question.difficulty)
@@ -156,7 +157,7 @@ app.post('/question/runTest', async (req, res) => {
                 user.level += 1;
             }
             await user.save();
-            console.log(lobbies)
+            
             //use lobbyID to retrieve current room name
             //emit to all sockets in the room that someone has won
             lobbies.map(async (lobby) => {
@@ -243,7 +244,7 @@ let roomName = "lobby" + String(lobbyID)
 io.on('connect', (socket) => {
     //Listener for creating a match
     socket.on('joinMatch', async () => {
-        console.log('socket connected')
+        
         try{
             
             //check if the socket has already joined a match (cause of useEffect double-rendering on mount)
@@ -346,7 +347,6 @@ io.on('connect', (socket) => {
                     }
                 }
             }
-            console.log('Winners after:', winners)
         })
 
         socket.on('createPrivate', () => {
