@@ -27,7 +27,7 @@ function Dashboard() {
         setDashboardOption(option)
     }
 
-    return <div className="w-[80%] h-full bg-[#F0FFF0] border-[#666565] border-[1px] shadow-[#666565] shadow-sm">
+    return <div className="w-[80%] h-full bg-[#f8f8f8] border-[#666565] border-[2px] shadow-[#666565] shadow-sm">
 
         <div className="flex flex-row h-full">
             {/* div for side navigation bar */}

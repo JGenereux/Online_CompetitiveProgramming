@@ -30,14 +30,14 @@ function JoinMatch() {
     const navigate = useNavigate()
 
     return <div className="flex flex-row w-[65%] md:w-[45%] lg:md:w-[40%] justify-center items-center space-x-6">
-        <div className="flex flex-col bg-white text-black bg-opacity-90 w-40 md:w-1/2 h-full rounded-xl py-4 items-center lg:justify-center text-center ">
+        <div className="flex flex-col bg-white text-black w-40 md:w-1/2 h-full rounded-xl py-4 items-center lg:justify-center text-center ">
             <p className="font-basicFont text-xs md:text-sm lg:text-lg lg:mb-4">Play against anyone</p>
             <div className="flex flex-col items-center">
                 <img src={earthIcon} className="w-full md:w-36 lg:w-60 lg:mb-1.5"></img>
                 <Button onClick={() => navigate('/lobby')} sx={{ color: 'black', padding: ['3px', '5px'], fontSize: ['12px', '18px'], fontFamily: 'headerFont', border: 'solid black', borderWidth: '1.2px', boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.25)' }}>Join Match</Button>
             </div>
         </div>
-        <div className="flex flex-col bg-white text-black bg-opacity-90 w-40 md:w-1/2 h-full rounded-xl py-4 items-center lg:justify-center text-center">
+        <div className="flex flex-col bg-white text-black w-40 md:w-1/2 h-full rounded-xl py-4 items-center lg:justify-center text-center">
             <p className="font-basicFont text-xs md:text-sm lg:text-lg lg:mb-4">Play against friends</p>
             <div className="flex flex-col items-center justify-center">
                 <img src={lockIcon} className="w-full md:w-36 lg:w-60 lg:mb-1"></img>
