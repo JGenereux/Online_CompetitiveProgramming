@@ -60,12 +60,13 @@ export default function Match() {
     useEffect(() => {
         const { id } = params;
 
+        //socket disconnects only if player left game or matchExpires
         socket.on('playerDisconnected', ({ disconnected }) => {
             if (questionPassed) return
             if (disconnected) {
-                console.log('nah')
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
+                socket.disconnect()
                 navigate('/', { replace: true })
             }
         })
@@ -73,9 +74,9 @@ export default function Match() {
         socket.on('matchExpired', ({ disconnected }) => {
             if (questionPassed) return
             if (disconnected) {
-                console.log('no')
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
+                socket.disconnect()
                 navigate('/', { replace: true })
             }
         })
@@ -84,6 +85,7 @@ export default function Match() {
         //and their scores
         socket.on('gameResult', ({ result, message }) => {
             if (result) {
+                window.alert(message)
                 resetQuestion()
                 navigate(`/result/${id}`, { replace: true })
             }
@@ -99,7 +101,6 @@ export default function Match() {
             socket.off('playerDisconnected')
             socket.off('matchExpired')
             socket.off('gameResult')
-            socket.disconnect()
         }
     }, [])
 
