@@ -250,15 +250,15 @@ io.on('connect', (socket) => {
             if(sockets.has(socket.id)) return;
             sockets.add(socket.id)
             
-            let playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
-        
+    
+            socket.roomName = roomName // store roomName as property of socket to use if player disconnects from match
+            socket.join(roomName)
+            
             if(playersInRoom == 2) {
                 lobbyID = randomUUID();
                 roomName = "lobby" + String(lobbyID);
             }
-            
-            socket.roomName = roomName // store roomName as property of socket to use if player disconnects from match
-            socket.join(roomName)
+        
             playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
             
             io.to(roomName).emit('roomUpdate', {roomName, playersInRoom})
