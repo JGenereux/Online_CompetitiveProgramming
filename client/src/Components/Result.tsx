@@ -15,22 +15,17 @@ interface Player {
 
 const testPlayer = [
     {
-        userName: 'mlg42069',
-        experience: 100,
-        level: 2
-    },
-    {
-        userName: 'coolkid',
-        experience: 300,
-        level: 1
-    },
+        userName: '',
+        experience: 0,
+        level: 0
+    }
 ]
 
 export default function Result() {
     const { resetQuestion } = UseQuestion();
 
     const [players, setPlayers] = useState<Player[]>(testPlayer)
-    const [winner, setWinner] = useState<string>('Jellybean')
+    const [winner, setWinner] = useState<string>('')
     const [winnerCode, setWinnerCode] = useState<string>('')
     const { currUser } = useUser()
     const params = useParams()
@@ -44,6 +39,7 @@ export default function Result() {
             setWinner(winner)
             setWinnerCode(winnerCode)
 
+            socket.disconnect() //used in return statement as well in case this event doesn't fire
             resetQuestion();
         })
 

@@ -140,7 +140,7 @@ app.post('/question/runTest', async (req, res) => {
             testsPassed,
             passed
         };
-
+        console.log('passed?: ', passed)
         //if all testcases are passed means game is now over.
         if(passed) {
             const rewardedExp = getQuestionExperience(question.difficulty)
@@ -156,7 +156,7 @@ app.post('/question/runTest', async (req, res) => {
                 user.level += 1;
             }
             await user.save();
-      
+            console.log(lobbies)
             //use lobbyID to retrieve current room name
             //emit to all sockets in the room that someone has won
             lobbies.map(async (lobby) => {
@@ -175,10 +175,12 @@ app.post('/question/runTest', async (req, res) => {
                         const resultRoomName = 'result' + String(lobby.lobbyID)
                         winners.push({roomName: resultRoomName, userName: userName, userOutput: userCode})
                     }
+                    
                     destroyLobby(roomName)
                 }
             })
         } 
+        
         return res.json(resultRes)
     } catch(error) {
         console.log(error)
@@ -243,10 +245,11 @@ io.on('connect', (socket) => {
     socket.on('joinMatch', async () => {
         console.log('socket connected')
         try{
+            
             //check if the socket has already joined a match (cause of useEffect double-rendering on mount)
             if(sockets.has(socket.id)) return;
             sockets.add(socket.id)
-
+            
             let playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
         
             if(playersInRoom == 2) {
@@ -257,7 +260,7 @@ io.on('connect', (socket) => {
             socket.roomName = roomName // store roomName as property of socket to use if player disconnects from match
             socket.join(roomName)
             playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
-        
+            
             io.to(roomName).emit('roomUpdate', {roomName, playersInRoom})
 
             if(playersInRoom === 2) {
@@ -351,7 +354,7 @@ io.on('connect', (socket) => {
         })
 
         socket.on('disconnect', () => {
-            console.log('look at me disconnecting im so cool!')
+          
             if(!socket.roomName || socket.roomName.length == 0) return
             
             let roomName = socket.roomName
@@ -376,6 +379,7 @@ io.on('connect', (socket) => {
             if(roomSockets.has(socket.id)) {
                 roomSockets.delete(socket.id)
             }
+
         })
 })
 

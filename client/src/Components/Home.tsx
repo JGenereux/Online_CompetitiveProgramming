@@ -10,8 +10,8 @@ document.body.style.backgroundColor = "#121212"
 
 export default function Home() {
     useEffect(() => {
-        if (!socket.connected) {
-            socket.connect()
+        if (socket.connected) {
+            socket.disconnect()
         }
     }, [])
     return <div className="flex flex-col text-white">

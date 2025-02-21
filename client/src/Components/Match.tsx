@@ -62,21 +62,18 @@ export default function Match() {
 
         //socket disconnects only if player left game or matchExpires
         socket.on('playerDisconnected', ({ disconnected }) => {
-            if (questionPassed) return
             if (disconnected) {
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
-                socket.disconnect()
                 navigate('/', { replace: true })
             }
         })
 
         socket.on('matchExpired', ({ disconnected }) => {
-            if (questionPassed) return
+
             if (disconnected) {
                 window.alert('One of the users left. The game is now ending!')
                 resetQuestion()
-                socket.disconnect()
                 navigate('/', { replace: true })
             }
         })

@@ -23,6 +23,10 @@ function WaitingLobby({ isPublic }: LobbyProps) {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!socket.connected) {
+            socket.connect()
+            console.log('connected to socket')
+        }
         socket.emit('joinMatch')
 
         socket.on('roomUpdate', ({ playersInRoom }) => {
