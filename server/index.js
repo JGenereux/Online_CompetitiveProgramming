@@ -324,7 +324,8 @@ io.on('connect', (socket) => {
             }
 
             await resultRooms.addUser(lobbyID, currUser)
-            
+            console.log('Room size is: ', roomSize)
+            console.log('Winners so far:', winners)
             if(roomSize == 2) {
                 // find winner of current room
                 const winner = winners.find((winner) => {
@@ -345,6 +346,7 @@ io.on('connect', (socket) => {
                     }
                 }
             }
+            console.log('Winners after:', winners)
         })
 
         socket.on('createPrivate', () => {
