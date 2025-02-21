@@ -253,14 +253,14 @@ io.on('connect', (socket) => {
     
             socket.roomName = roomName // store roomName as property of socket to use if player disconnects from match
             socket.join(roomName)
+        
+            const playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
             
             if(playersInRoom == 2) {
                 lobbyID = randomUUID();
                 roomName = "lobby" + String(lobbyID);
             }
-        
-            const playersInRoom = io.sockets.adapter.rooms.get(roomName)?.size || 0;
-            
+
             io.to(roomName).emit('roomUpdate', {roomName, playersInRoom})
 
             if(playersInRoom === 2) {
