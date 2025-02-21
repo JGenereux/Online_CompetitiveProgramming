@@ -15,9 +15,9 @@ export default function Navbar() {
     }
 
     return <div className="flex flex-row flex-wrap z-50 my-2 md:my-0 static items-center text-white font-customFont">
-        <div className="flex flex-row flex-wrap space-x-4 ml-4 my-2 sm:my-0 font-basicFont">
-            <a onClick={() => navigate('/')} className="text-xs sm:text-sm">Home</a>
-            <a onClick={() => navigate('/about')} className="text-xs sm:text-sm">Leaderboards</a>
+        <div className="flex flex-row flex-wrap space-x-4 sm:space-x-6 md:space-x-8 ml-4 my-2 sm:my-0 font-basicFont">
+            <a onClick={() => navigate('/')} className="text-xs sm:text-sm md:text-lg">Home</a>
+            <a onClick={() => navigate('/about')} className="text-xs sm:text-sm md:text-lg">Leaderboards</a>
         </div>
 
         <div className={openAccount ? "ml-auto w-fit" : "ml-auto w-[45%] sm:w-[25%]"}>
@@ -69,12 +69,12 @@ function AcctOptionsDisplay({ HandleAccount }: AcctDisplayProps) {
     return (
         <div className="flex flex-col mr-4 w-full">
             <div className="flex flex-row items-center space-x-1 ml-auto">
-                {(currUser && currUser.userName.length > 0) ? <p className="text-xs sm:text-sm font-headerFont"> {currUser.userName}</p > : <p className="text-xs sm:text-sm font-headerFont"> not logged in</p >}
-                <AccountCircle sx={{ width: '18px', height: '18px', cursor: 'pointer' }} onClick={HandleAccount} />
+                {(currUser && currUser.userName.length > 0) ? <p className="text-xs sm:text-sm md:text-lg font-headerFont"> {currUser.userName}</p > : <p className="text-xs sm:text-sm md:text-lg font-headerFont"> not logged in</p >}
+                <AccountCircle sx={{ width: ['18px', '28px'], height: ['18px', '28px'], cursor: 'pointer' }} onClick={HandleAccount} />
             </div>
-            <div className="flex flex-col ml-auto text-xs sm:text-sm font-basicFont">
+            <div className="flex flex-col ml-auto text-xs sm:text-sm md:text-md font-basicFont">
                 {currUser && currUser.userName.length > 0 ?
-                    <div className="flex flex-row flex-wrap space-x-2 text-xs">
+                    <div className="flex flex-row flex-wrap space-x-2">
                         <Link to="/settings">Settings</Link>
                         <button onClick={HandleLogout}>Logout</button>
                     </div>
@@ -88,7 +88,7 @@ function NormalAcctDisplay({ HandleAccount }: AcctDisplayProps) {
     const { currUser } = useUser()
 
     return <div className="flex flex-row w-full justify-end space-x-1 font-headerFont items-center">
-        {(currUser && currUser.userName.length > 0) ? <p className="text-xs sm:text-sm">{currUser.userName}</p> : <p className="text-xs sm:text-sm"> not logged in</p >}
-        <AccountCircle sx={{ width: '18px', height: '18px', cursor: 'pointer' }} onClick={HandleAccount} />
+        {(currUser && currUser.userName.length > 0) ? <p className="text-xs sm:text-sm md:text-lg">{currUser.userName}</p> : <p className="text-xs sm:text-sm md:text-lg"> not logged in</p >}
+        <AccountCircle sx={{ width: ['18px', '28px'], height: ['18px', '28px'], cursor: 'pointer' }} onClick={HandleAccount} />
     </div>
 }
