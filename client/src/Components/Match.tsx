@@ -82,6 +82,8 @@ export default function Match() {
 
     const [disconnected, setDisconnected] = useState<boolean>(false)
 
+    const [running, setRunning] = useState<boolean>(false)
+
     const navigate = useNavigate();
     const params = useParams();
 
@@ -171,6 +173,7 @@ export default function Match() {
                 return
             }
 
+            setRunning(true)
             const runTestInfo = {
                 userCode: value,
                 currLanguage: currLanguage,
@@ -189,6 +192,8 @@ export default function Match() {
             caseResults.map((result: testCase) => {
                 responses.push(result.userOutput);
             })
+
+            setRunning(false)
 
             if (passed) {
                 updateUser();
@@ -215,16 +220,14 @@ export default function Match() {
                 <div className="flex flex-col">
                     <div className="flex flex-row bg-[#1e1e1e] w-full sm:w-fit items-center md:p-2">
                         <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
-                        <Button sx={{ height: '26px', fontSize: ['10px', '12px', '14px', '16px'], color: 'white' }} onClick={RunCode}>Run</Button>
-                        <Blocks
-                            height="80"
-                            width="80"
+                        {running ? <div className=""><Blocks
                             color="#4fa94d"
                             ariaLabel="blocks-loading"
-                            wrapperStyle={{}}
+                            wrapperStyle={{ height: 'full', width: '25px' }}
                             wrapperClass="blocks-wrapper"
                             visible={true}
-                        />
+                        /></div> : <Button sx={{ height: '26px', fontSize: ['10px', '12px', '14px', '16px'], color: 'white' }} onClick={RunCode}>Run</Button>
+                        }
                     </div>
                     <Editor
                         height="300px"
