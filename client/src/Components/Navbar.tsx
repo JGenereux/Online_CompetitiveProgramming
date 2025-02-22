@@ -17,7 +17,7 @@ export default function Navbar() {
     return <div className="flex flex-row flex-wrap z-50 my-2 md:my-0 static items-center text-white font-customFont">
         <div className="flex flex-row flex-wrap space-x-4 sm:space-x-6 md:space-x-8 ml-4 my-2 sm:my-0 font-basicFont">
             <a onClick={() => navigate('/')} className="text-xs sm:text-sm md:text-lg cursor-pointer">Home</a>
-            <a onClick={() => navigate('/about')} className="text-xs sm:text-sm md:text-lg cursor-pointer">Leaderboards</a>
+            <a onClick={() => navigate('/leaderboard')} className="text-xs sm:text-sm md:text-lg cursor-pointer">Leaderboards</a>
         </div>
 
         <div className={openAccount ? "ml-auto w-fit" : "ml-auto w-[45%] sm:w-[25%]"}>

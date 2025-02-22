@@ -414,8 +414,8 @@ setInterval(() => {
     checkLobbyTimes();
 }, 5000)
 
-const lobbyRouter = require("./Routes/lobby");
 const usersRouter = require("./Routes/user");
+const leaderboardRouter = require('./Routes/leaderboard')
 
-app.use('/lobby', lobbyRouter)
 app.use('/users', usersRouter)
+app.use('/leaderboard', leaderboardRouter)

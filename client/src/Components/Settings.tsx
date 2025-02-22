@@ -1,8 +1,3 @@
-interface Question {
-    name: string,
-    difficulty: string,
-    topicTags: string[],
-}
 import { AccountCircle } from '@mui/icons-material'
 import { ReactNode, useEffect, useState } from 'react'
 import { useUser } from './Contexts/userContext'
@@ -20,10 +15,16 @@ export default function Settings() {
     }, [])
     return <div>
         <Navbar />
-        <div className="flex h-[27rem] md:h-72 my-1 justify-center">
+        <div className="flex h-[27rem] text-black md:h-72 my-1 justify-center">
             <Dashboard />
         </div>
     </div>
+}
+
+interface Question {
+    name: string,
+    difficulty: string,
+    topicTags: string[],
 }
 
 function Dashboard() {

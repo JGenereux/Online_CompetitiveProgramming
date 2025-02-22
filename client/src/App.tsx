@@ -12,40 +12,35 @@ import { QuestionProvider } from "./Components/Contexts/questionContext"
 import { TokenProvider } from "./Components/Contexts/tokenContext"
 import Settings from "./Components/Settings"
 
-import { useMemo } from "react";
-import { createTheme } from "@mui/material";
+import Leaderboard from "./Components/Leaderboard"
 
-import { ThemeProvider } from "@mui/material"
-import { getDesignTokens } from "./Components/shared-theme/themePrimitives"
 
 function App() {
-  const theme = useMemo(() => createTheme(getDesignTokens("dark")), []);
 
   return (
     <UserProvider>
       <TokenProvider>
         <QuestionProvider>
           <BrowserRouter>
-            <ThemeProvider theme={theme} >
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignupForm />} />
-                <Route path="/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
-                <Route
-                  path="/lobby"
-                  element={
-                    <ProtectedRoute>
-                      <Lobby isPublic={true} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/lobby/:id" element={<ProtectedRoute> <Match /> </ProtectedRoute>} />
-                <Route path="/privateLobby" element={<ProtectedRoute> <PrivateLobby /> </ProtectedRoute>} />
-                <Route path="/privateLobby/:id" element={<ProtectedRoute> <Lobby isPublic={false} /> </ProtectedRoute>} />
-                <Route path="/result/:id" element={<ProtectedRoute> <Result /> </ProtectedRoute>} />
-              </Routes>
-            </ThemeProvider>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignupForm />} />
+              <Route path="/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
+              <Route
+                path="/lobby"
+                element={
+                  <ProtectedRoute>
+                    <Lobby isPublic={true} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/lobby/:id" element={<ProtectedRoute> <Match /> </ProtectedRoute>} />
+              <Route path="/privateLobby" element={<ProtectedRoute> <PrivateLobby /> </ProtectedRoute>} />
+              <Route path="/privateLobby/:id" element={<ProtectedRoute> <Lobby isPublic={false} /> </ProtectedRoute>} />
+              <Route path="/result/:id" element={<ProtectedRoute> <Result /> </ProtectedRoute>} />
+            </Routes>
           </BrowserRouter >
         </QuestionProvider>
       </TokenProvider>
