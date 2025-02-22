@@ -83,7 +83,7 @@ export default function Match() {
     const [disconnected, setDisconnected] = useState<boolean>(false)
 
     const [running, setRunning] = useState<boolean>(false)
-    const monacoFontSize = window.innerWidth < 1200 ? 14 : 16;
+    const monacoFontSize = window.innerWidth < 768 ? 14 : 18;
 
     const navigate = useNavigate();
     const params = useParams();
