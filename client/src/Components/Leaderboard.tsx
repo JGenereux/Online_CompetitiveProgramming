@@ -49,7 +49,7 @@ function Main() {
 
     return <div className="flex flex-col h-full w-[90%] md:w-[80%] ml-4 sm:ml-6 md:ml-12 lg:ml-20">
         {leaderboard[0] && <NumberOne user={leaderboard[0]} />}
-        <div className="flex flex-col h-full overflow-y-scroll my-2 md:my-6">
+        <div className="flex flex-col h-full my-2 md:my-6">
             <div className="flex flex-row w-full text-white text-sm sm:text-lg md:text-xl lg:text-3xl font-customFont">
                 <p className="w-1/3 text-center">User</p>
                 <p className="w-1/3 text-center">Level</p>
@@ -76,9 +76,9 @@ function Stats({ leaderboard }: StatsProps) {
         return () => window.removeEventListener("resize", handleResize)
     })
 
-    return <div className="h-[6%] lg:h-[5%]">
+    return <div className="h-[5%] lg:h-[5%]">
         {leaderboard?.map((playerStat, index) => (
-            <div key={index} className="text-white h-full flex flex-row xs:text-md sm:text-lg md:text-xl lg:text-3xl font-basicFont space-x-4 border-white border-b-2 items-center">
+            <div key={index} className="text-white h-full flex md:p-4 flex-row xs:text-md sm:text-lg md:text-xl lg:text-3xl font-basicFont space-x-4 border-white border-b-2 items-center">
                 <div className="flex flex-row w-1/3 items-center justify-center">
                     <p className="w-1/3 ml-1 md:ml-3">#{index + 1}</p>
                     <div className="flex flex-row w-2/3 space-x-1 md:space-x-2 items-center">
