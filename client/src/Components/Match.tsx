@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "./Contexts/userContext";
 import { UseQuestion } from "./Contexts/questionContext";
 import Navbar from "./Navbar";
-
+import { Blocks } from 'react-loader-spinner'
 interface Test {
     expectedResult: string,
     case: Record<'key2' | 'key3', string>,
@@ -213,9 +213,18 @@ export default function Match() {
             <Question question={question} />
             <div className="flex flex-col space-y-5 w-[50%] ml-auto mr-2">
                 <div className="flex flex-col">
-                    <div className="flex flex-row bg-[#1e1e1e] w-fit items-center">
+                    <div className="flex flex-row bg-[#1e1e1e] w-full sm:w-fit items-center md:p-2">
                         <MenuBar currLanguage={currLanguage} setCurrLanguage={setCurrLanguage} setCurrLanguageVersion={setCurrLanguageVersion} />
-                        <Button sx={{ height: '26px', fontSize: '12px', color: 'white' }} onClick={RunCode}>Run</Button>
+                        <Button sx={{ height: '26px', fontSize: ['10px', '12px', '14px', '16px'], color: 'white' }} onClick={RunCode}>Run</Button>
+                        <Blocks
+                            height="80"
+                            width="80"
+                            color="#4fa94d"
+                            ariaLabel="blocks-loading"
+                            wrapperStyle={{}}
+                            wrapperClass="blocks-wrapper"
+                            visible={true}
+                        />
                     </div>
                     <Editor
                         height="300px"
@@ -258,13 +267,13 @@ interface QuestionProps {
 
 function Question({ question }: QuestionProps) {
     return <div className="w-[40%] md:w-[46%] ml-3 text-white bg-[#1e1e1e] pl-2 py-1 rounded-sm">
-        <div className="flex flex-row items-center mb-2 font-headerFont">
-            <h3 className="text-lg">{question.title}</h3>
+        <div className="flex flex-row flex-wrap items-center mb-2 font-headerFont">
+            <h3 className="text-lg md:text-xl lg:text-3xl">{question.title}</h3>
             <Difficulty difficulty={question.difficulty} />
         </div>
         <div className="">
             {(question && question.content.length > 0) && <div className="flex flex-col space-y-2">
-                <p className="text-xs md:text-sm whitespace-pre-wrap font-customFont">{question.content}</p>
+                <p className="text-xs sm:text-sm md:text-lg lg:text-xl whitespace-pre-wrap font-customFont">{question.content}</p>
             </div>}
         </div>
     </div>
@@ -282,7 +291,7 @@ function Difficulty({ difficulty }: DifficultyProps) {
             : "text-red-500";
 
     return (
-        <div className={`ml-auto mr-8 text-sm px-3 py-0.5 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] shadow-sm transition-all duration-200 hover:bg-[#222222] hover:border-[#393939] ${textColor}`}>
+        <div className={`sm:ml-auto sm:mr-8 text-xs md:text-lg lg:text-xl px-3 py-0.5 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] shadow-sm transition-all duration-200 hover:bg-[#222222] hover:border-[#393939] ${textColor}`}>
             {difficulty}
         </div>
     );
@@ -309,9 +318,9 @@ function Output({ expectedCases, codeResponse, testCases, numTestCases }: Output
 
     return (
         <div className="bg-[#1e1e1e]">
-            <div className="flex flex-row space-x-4 border-[#666565] border-b-[1.5px]">
+            <div className="flex flex-row space-x-2 md:space-x-4 border-[#666565] border-b-[1.5px]">
                 {tests.map((index) => {
-                    return <div key={index} className="font-headerFont">
+                    return <div key={index} className="font-headerFont text-sm sm:text-lg md:text-xl lg:text-2xl">
                         {(testCases && testCases[index - 1]) ?
                             <h3 className={testCases[index - 1].passed == true ? `text-green-400 ml-1 cursor-pointer` : `text-red-600 ml-1 cursor-pointer`} onClick={() => setSelectedCase(index)}>Test Case {index}</h3>
                             : <h3 className="text-white ml-1 cursor-pointer" onClick={() => setSelectedCase(index)}>Test Case {index}</h3>}
@@ -321,11 +330,11 @@ function Output({ expectedCases, codeResponse, testCases, numTestCases }: Output
             <div className="bg-[#1e1e1e] w-full h-[100px] font-basicFont">
                 {(selectedCase != null && expectedCases) && <div>
                     {testCases[selectedCase - 1] ? <div>
-                        <p className="pl-1 py-1 text-xs  text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
-                        <p className="pl-1 py-1 text-xs  text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
+                        <p className="pl-1 py-1 text-xs md:text-md lg:text-lg  text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
+                        <p className="pl-1 py-1 text-xs md:text-md lg:text-lg  text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
                         {codeResponse[selectedCase - 1] && <p className="pl-1 py-1 text-xs  text-white">Your output: {codeResponse[selectedCase - 1].slice(0, 100)}</p>}
                     </div> : <div>
-                        <p className="pl-1 py-1 text-xs  text-white">Expected Output: {expectedCases[selectedCase - 1]}</p>
+                        <p className="pl-1 py-1 text-xs md:text-md lg:text-lg  text-white">Expected Output: {expectedCases[selectedCase - 1]}</p>
                     </div>
                     }
                 </div>}
