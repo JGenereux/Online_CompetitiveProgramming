@@ -336,7 +336,7 @@ function Output({ expectedCases, codeResponse, testCases, numTestCases }: Output
                     {testCases[selectedCase - 1] ? <div>
                         <p className="pl-1 py-1 text-xs md:text-md lg:text-lg  text-white">Case {selectedCase} result: {testCases[selectedCase - 1].passed === true ? 'Passed' : 'Failed'}</p>
                         <p className="pl-1 py-1 text-xs md:text-md lg:text-lg  text-white">Case {selectedCase} Expected Output: {testCases[selectedCase - 1].expectedOutput}</p>
-                        {codeResponse[selectedCase - 1] && <p className="pl-1 py-1 text-xs  text-white">Your output: {codeResponse[selectedCase - 1].slice(0, 100)}</p>}
+                        {codeResponse[selectedCase - 1] && <p className="pl-1 py-1 text-xs md:text-md lg:text-lg text-white">Your output: {codeResponse[selectedCase - 1].slice(0, 100)}</p>}
                     </div> : <div>
                         <p className="pl-1 py-1 text-xs md:text-md lg:text-lg  text-white">Expected Output: {expectedCases[selectedCase - 1]}</p>
                     </div>
