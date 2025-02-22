@@ -33,7 +33,7 @@ function Main() {
         window.addEventListener('resize', handleResize)
         async function getLeaderboard() {
             try {
-                const res = await axios.get('http://localhost:5000/leaderboard/')
+                const res = await axios.get('https://codeblitz.up.railway.app/leaderboard/')
                 if (res.data) {
                     const arr: PlayerStats[] = res.data
                     const sortedArr = arr.sort((a, b) => b.level - a.level)
